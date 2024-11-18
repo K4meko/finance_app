@@ -3,14 +3,14 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { access } from 'fs';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -34,10 +34,31 @@ export class AuthService {
           firstName: body.firstName,
           lastName: body.lastName,
           monthlyExpenses: {
-            create: [],
+            create:
+              body.monthlyExpenses?.map((expense) => ({
+                type: expense.name,
+                amount: expense.amount,
+              })) || [],
           },
           months: {
             create: [],
+          },
+          expectedDatePaycheck: body.dateOfPaycheck,
+          defaultBudget: {
+            create: {
+              budgetItems: {
+                create: [],
+              },
+            },
+          },
+        },
+        include: {
+          monthlyExpenses: true,
+          months: true,
+          defaultBudget: {
+            include: {
+              budgetItems: true,
+            },
           },
         },
       });
@@ -58,7 +79,13 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email: body.email },
-        select: { userId: true, email: true, password: true },
+        select: {
+          id: true,
+          email: true,
+          password: true,
+          firstName: true,
+          lastName: true,
+        },
       });
 
       if (!user) {
@@ -70,10 +97,7 @@ export class AuthService {
         throw new ForbiddenException('Password is incorrect');
       }
 
-      const accessToken = await this.signJwt(user.userId, user.email);
-      return {
-        access_token: accessToken,
-      };
+      return this.signJwt(user.id, user.email, user.firstName, user.lastName);
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2021') {
@@ -84,9 +108,14 @@ export class AuthService {
     }
   }
 
-  signJwt(userId: number, email: string) {
-    const payload = { sub: userId, email: email };
-    return this.jwtService.signAsync(payload, {
+  signJwt(userId: number, email: string, firstName: string, lastName: string) {
+    const payload = {
+      sub: userId,
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+    };
+    return this.jwtService.sign(payload, {
       expiresIn: '1d',
       secret: this.configService.get<string>('JWT_SECRET'),
     });

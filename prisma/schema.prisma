@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  userId    Int      @id @default(autoincrement())
+  id    Int      @id @default(autoincrement()) 
   email     String   @unique
   firstName      String?
   lastName      String?
@@ -24,7 +24,7 @@ model User {
 model Budget {
   id        Int      @id @default(autoincrement())
   userId    Int     @unique
-  user      User     @relation(fields: [userId], references: [userId])
+  user      User     @relation(fields: [userId], references: [id])
   budgetItems BudgetItem[]
   month Month?
 }
@@ -42,13 +42,13 @@ model MonthlyExpense {
   type      String
   amount    Float
   userId    Int
-  user      User     @relation(fields: [userId], references: [userId])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Month {
   id        Int      @id @default(autoincrement())
-  userId    Int      @unique
-  user      User     @relation(fields: [userId], references: [userId])
+  userId    Int      
+  user      User     @relation(fields: [userId], references: [id])
   year      Int
   budget    Float
   createdAt DateTime @default(now())
