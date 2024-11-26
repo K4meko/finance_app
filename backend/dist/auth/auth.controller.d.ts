@@ -4,28 +4,30 @@ import { LoginDto } from './dto/login.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
-    login(body: LoginDto): Promise<string>;
+    login(body: LoginDto): Promise<{
+        jwtToken: string;
+    }>;
     signup(body: AuthDto): Promise<{
         months: {
-            budget: number;
             id: number;
             createdAt: Date;
             userId: number;
             year: number;
+            budget: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            userId: number;
             type: string;
             amount: number;
+            userId: number;
         }[];
         defaultBudget: {
             budgetItems: {
                 id: number;
-                budgetId: number;
                 type: string;
                 amount: number;
+                budgetId: number;
             }[];
         } & {
             id: number;

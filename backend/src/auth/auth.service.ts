@@ -115,9 +115,11 @@ export class AuthService {
       firstName: firstName,
       lastName: lastName,
     };
-    return this.jwtService.sign(payload, {
-      expiresIn: '1d',
-      secret: this.configService.get<string>('JWT_SECRET'),
-    });
+    return {
+      jwtToken: this.jwtService.sign(payload, {
+        expiresIn: '1d',
+        secret: this.configService.get<string>('JWT_SECRET'),
+      }),
+    };
   }
 }

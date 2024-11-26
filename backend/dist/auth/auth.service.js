@@ -110,10 +110,12 @@ let AuthService = class AuthService {
             firstName: firstName,
             lastName: lastName,
         };
-        return this.jwtService.sign(payload, {
-            expiresIn: '1d',
-            secret: this.configService.get('JWT_SECRET'),
-        });
+        return {
+            jwtToken: this.jwtService.sign(payload, {
+                expiresIn: '1d',
+                secret: this.configService.get('JWT_SECRET'),
+            }),
+        };
     }
 };
 exports.AuthService = AuthService;

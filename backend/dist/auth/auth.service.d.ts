@@ -11,25 +11,25 @@ export declare class AuthService {
     getHello(): string;
     signup(body: AuthDto): Promise<{
         months: {
-            budget: number;
             id: number;
             createdAt: Date;
             userId: number;
             year: number;
+            budget: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            userId: number;
             type: string;
             amount: number;
+            userId: number;
         }[];
         defaultBudget: {
             budgetItems: {
                 id: number;
-                budgetId: number;
                 type: string;
                 amount: number;
+                budgetId: number;
             }[];
         } & {
             id: number;
@@ -45,6 +45,10 @@ export declare class AuthService {
         updatedAt: Date;
         expectedDatePaycheck: Date | null;
     }>;
-    login(body: LoginDto): Promise<string>;
-    signJwt(userId: number, email: string, firstName: string, lastName: string): string;
+    login(body: LoginDto): Promise<{
+        jwtToken: string;
+    }>;
+    signJwt(userId: number, email: string, firstName: string, lastName: string): {
+        jwtToken: string;
+    };
 }
