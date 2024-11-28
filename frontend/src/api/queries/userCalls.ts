@@ -10,6 +10,7 @@ export const fetchLogin = async (email: string, password: string) => {
     },
     body: JSON.stringify({email, password}),
   });
+  console.log("ss");
   if (!response.ok) {
     return new Error(response.statusText);
   }
@@ -18,4 +19,5 @@ export const fetchLogin = async (email: string, password: string) => {
   if (token) {
     localStorage.setItem("token", token);
   }
+  console.log(token);
 };
