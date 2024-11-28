@@ -4,6 +4,11 @@ import logo from "../assets/Budgetly.svg";
 
 export function Home() {
   const [opened, {toggle}] = useDisclosure();
+  const token = localStorage.getItem("token");
+  if (!token) {
+    window.location.href = "/signin";
+    return null;
+  }
 
   return (
     <AppShell
@@ -13,16 +18,16 @@ export function Home() {
         breakpoint: "sm",
         collapsed: {mobile: !opened},
       }}
-      padding='md'
+      padding="md"
     >
       <AppShell.Header>
-        <Burger opened={opened} onClick={toggle} hiddenFrom='sm' size='sm' />
+        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <div>
           <img style={{marginTop: 10, marginLeft: 10}} src={logo}></img>
         </div>
       </AppShell.Header>
 
-      <AppShell.Navbar p='md'>Navbar</AppShell.Navbar>
+      <AppShell.Navbar p="md">Navbar</AppShell.Navbar>
 
       <AppShell.Main>Main</AppShell.Main>
     </AppShell>

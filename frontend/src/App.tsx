@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {MantineProvider, createTheme, rem} from "@mantine/core";
-
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {SignIn} from "./pages/SignIn";
 import "@mantine/core/styles.css";
 import {Header} from "./components/Header";
@@ -52,7 +52,14 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>
-        <SignIn />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Home />}>
+              <Route path="signin" element={<SignIn />} />
+              <Route path="*" element={<Home />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
       </MantineProvider>
     </QueryClientProvider>
   );
