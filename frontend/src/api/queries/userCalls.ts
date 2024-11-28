@@ -3,14 +3,13 @@ interface LoginResponse {
   jwtToken: string;
 }
 export const fetchLogin = async (email: string, password: string) => {
-  const response = await fetch("localhost:3000/auth/login", {
+  const response = await fetch("http://localhost:3000/auth/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({email, password}),
   });
-  console.log("ss");
   if (!response.ok) {
     return new Error(response.statusText);
   }
@@ -18,6 +17,7 @@ export const fetchLogin = async (email: string, password: string) => {
   const token = data.jwtToken;
   if (token) {
     localStorage.setItem("token", token);
+    window.location.href = "/home";
   }
   console.log(token);
 };
