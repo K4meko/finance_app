@@ -9,25 +9,25 @@ export declare class AuthController {
     }>;
     signup(body: AuthDto): Promise<{
         months: {
+            budget: number;
             id: number;
             createdAt: Date;
             userId: number;
             year: number;
-            budget: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
+            userId: number;
             type: string;
             amount: number;
-            userId: number;
         }[];
         defaultBudget: {
             budgetItems: {
                 id: number;
+                budgetId: number;
                 type: string;
                 amount: number;
-                budgetId: number;
             }[];
         } & {
             id: number;

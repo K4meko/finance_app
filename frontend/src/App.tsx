@@ -1,4 +1,5 @@
 import {useState} from "react";
+import "./borderbox.css";
 import {MantineProvider, createTheme, rem} from "@mantine/core";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {SignIn} from "./pages/SignIn";

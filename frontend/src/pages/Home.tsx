@@ -4,6 +4,8 @@ import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {useMediaQuery} from "@mantine/hooks";
 import logo from "../assets/Budgetly.svg";
+import "../borderbox.css";
+import {Navbar} from "../components/Navbar.tsx";
 
 export function Home() {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -35,13 +37,8 @@ export function Home() {
           />
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar p='md'>
-        Navbar
-        {Array(15)
-          .fill(0)
-          .map((_, index) => (
-            <Skeleton key={index} h={28} mt='sm' animate={false} />
-          ))}
+      <AppShell.Navbar>
+        <Navbar />
       </AppShell.Navbar>
       <AppShell.Main>Main</AppShell.Main>
     </AppShell>
