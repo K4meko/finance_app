@@ -10,14 +10,18 @@ export const fetchLogin = async (email: string, password: string) => {
     },
     body: JSON.stringify({email, password}),
   });
+
   if (!response.ok) {
-    return new Error(response.statusText);
+    console.log(response);
+    return response.statusText;
   }
   const data: LoginResponse = await response.json();
   const token = data.jwtToken;
   if (token) {
     localStorage.setItem("token", token);
     window.location.href = "/home";
+  } else {
+    throw new Error("No token received");
   }
   console.log(token);
 };

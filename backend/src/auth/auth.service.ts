@@ -89,7 +89,7 @@ export class AuthService {
       });
 
       if (!user) {
-        throw new ForbiddenException(`Email ${body.email} does not exist`);
+        throw new ForbiddenException(`User ${body.email} does not exist`);
       }
 
       const passwordMatches = await argon.verify(user.password, body.password);

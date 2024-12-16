@@ -7,9 +7,11 @@ import {
   IconSettings,
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
-import {Code, Group} from "@mantine/core";
+import {Button, Modal} from "@mantine/core";
 import {MantineLogo} from "@mantinex/mantine-logo";
 import classes from "./NavbarSimple.module.css";
+import {useModalStore} from "../states/modalStore";
+import {LogoutModal} from "./Modal";
 
 const data = [
   {link: "", label: "Home", icon: IconHome},
@@ -20,6 +22,7 @@ const data = [
 
 export function Navbar() {
   const [active, setActive] = useState("Billing");
+  const {modalOpened, openModal, closeModal} = useModalStore();
 
   const links = data.map(item => (
     <a
@@ -50,11 +53,13 @@ export function Navbar() {
           <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
           <span>Change account</span>
         </a>
-
         <a
           href='#'
           className={classes.link}
-          onClick={event => event.preventDefault()}
+          onClick={event => {
+            event.preventDefault();
+            openModal();
+          }}
         >
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>

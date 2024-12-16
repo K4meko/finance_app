@@ -86,7 +86,7 @@ let AuthService = class AuthService {
                 },
             });
             if (!user) {
-                throw new common_1.ForbiddenException(`Email ${body.email} does not exist`);
+                throw new common_1.ForbiddenException(`User ${body.email} does not exist`);
             }
             const passwordMatches = await argon.verify(user.password, body.password);
             if (!passwordMatches) {
