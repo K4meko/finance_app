@@ -1,25 +1,20 @@
-import {useQuery} from "react-query";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-interface LoginResponse {
-  jwtToken: string;
-}
-export const fetchLogin = async (email: string, password: string) => {
-  const response = await fetch(`${process.env}/auth/login`, {
+export const fetchRegister = async (email: string, password: string) => {
+  const response = await fetch(`${process.env}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({email, password}),
   });
-
   if (!response.ok) {
     console.log(response);
     return response.statusText;
   }
-  const data: LoginResponse = await response.json();
+  const data = await response.json();
   const token = data.jwtToken;
   if (token) {
     localStorage.setItem("token", token);
