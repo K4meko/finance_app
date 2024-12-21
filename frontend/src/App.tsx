@@ -4,6 +4,7 @@ import {MantineProvider, createTheme, rem} from "@mantine/core";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {SignIn} from "./pages/SignIn";
 import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
 import {Header} from "./components/Header";
 import {Home} from "./pages/Home";
 import {QueryClient, QueryClientProvider} from "react-query";
@@ -57,7 +58,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home />} />
             <Route path='signin' element={<SignIn />} />
-            <Route path='home' element={<Home />} />
+            <Route path='/home/*' element={<Home />} />
           </Routes>
         </BrowserRouter>
       </MantineProvider>

@@ -10,13 +10,17 @@ import {
 } from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
 import {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import {Route, Routes, useNavigate} from "react-router-dom";
 import {useMediaQuery} from "@mantine/hooks";
 import logo from "../assets/Budgetly.svg";
 import "../borderbox.css";
 import {Navbar} from "../components/Navbar.tsx";
 import {useModalStore} from "../states/modalStore.ts";
 import {LogoutModal} from "../components/Modal.tsx";
+import HomeContent from "./HomeContent.tsx";
+import CalendarContent from "./CalendarContent.tsx";
+import SettingsContent from "./SettingsContent.tsx";
+import OptionsContent from "./OptionsContent.tsx";
 
 export function Home() {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -58,7 +62,15 @@ export function Home() {
         <AppShell.Navbar>
           <Navbar />
         </AppShell.Navbar>
-        <AppShell.Main>Main</AppShell.Main>
+        <AppShell.Main w={"100vw"}>
+          <Routes>
+            <Route path='/' element={<HomeContent />} />
+            <Route path='/options' element={<OptionsContent />} />
+            <Route path='/settings' element={<SettingsContent />} />
+            <Route path='/calendar' element={<CalendarContent />} />
+            <Route path='/expenses' element={<p>skibidi bop bop </p>} />
+          </Routes>
+        </AppShell.Main>
       </AppShell>
 
       <LogoutModal opened={modalOpened} onClose={closeModal} />

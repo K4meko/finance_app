@@ -10,40 +10,7 @@ export declare class AuthService {
     constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService);
     getHello(): string;
     signup(body: AuthDto): Promise<{
-        months: {
-            budget: number;
-            id: number;
-            createdAt: Date;
-            userId: number;
-            year: number;
-            budgetId: number;
-        }[];
-        monthlyExpenses: {
-            id: number;
-            userId: number;
-            type: string;
-            amount: number;
-        }[];
-        defaultBudget: {
-            budgetItems: {
-                id: number;
-                budgetId: number;
-                type: string;
-                amount: number;
-            }[];
-        } & {
-            id: number;
-            userId: number;
-        };
-    } & {
-        id: number;
-        email: string;
-        firstName: string | null;
-        lastName: string | null;
-        password: string;
-        createdAt: Date;
-        updatedAt: Date;
-        expectedDatePaycheck: Date | null;
+        jwtToken: string;
     }>;
     login(body: LoginDto): Promise<{
         jwtToken: string;

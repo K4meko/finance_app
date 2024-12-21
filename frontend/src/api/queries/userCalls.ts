@@ -1,13 +1,10 @@
 import {useQuery} from "react-query";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 interface LoginResponse {
   jwtToken: string;
 }
 export const fetchLogin = async (email: string, password: string) => {
-  const response = await fetch(`${process.env}/auth/login`, {
+  const response = await fetch(`http://localhost:3000/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -62,7 +62,7 @@ let AuthService = class AuthService {
                     },
                 },
             });
-            return user;
+            return this.signJwt(user.id, user.email, user.firstName, user.lastName);
         }
         catch (error) {
             if (error instanceof library_1.PrismaClientKnownRequestError) {

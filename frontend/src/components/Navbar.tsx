@@ -2,42 +2,40 @@ import {useState} from "react";
 import {
   IconAdjustmentsHorizontal,
   IconCalendar,
+  IconChartPie,
+  IconCoins,
   IconHome,
   IconLogout,
   IconSettings,
   IconSwitchHorizontal,
 } from "@tabler/icons-react";
-import {Button, Modal} from "@mantine/core";
-import {MantineLogo} from "@mantinex/mantine-logo";
+import {Link} from "react-router-dom";
 import classes from "./NavbarSimple.module.css";
 import {useModalStore} from "../states/modalStore";
-import {LogoutModal} from "./Modal";
 
 const data = [
-  {link: "", label: "Home", icon: IconHome},
-  {link: "", label: "Options", icon: IconAdjustmentsHorizontal},
-  {link: "", label: "Account and Settings", icon: IconSettings},
-  {link: "", label: "Calendar", icon: IconCalendar},
+  {link: "/home", label: "Home", icon: IconHome},
+  {link: "/home/options", label: "Options", icon: IconChartPie},
+  {link: "/home/settings", label: "Account and Settings", icon: IconSettings},
+  {link: "/home/calendar", label: "Calendar", icon: IconCalendar},
+  {link: "/home/expenses", label: "Expenses", icon: IconCoins},
 ];
 
 export function Navbar() {
   const [active, setActive] = useState("Billing");
-  const {modalOpened, openModal, closeModal} = useModalStore();
+  const {modalOpened, openModal} = useModalStore();
 
   const links = data.map(item => (
-    <a
+    <Link
       className={classes.link}
       data-active={item.label === active || undefined}
-      href={item.link}
+      to={item.link}
       key={item.label}
-      onClick={event => {
-        event.preventDefault();
-        setActive(item.label);
-      }}
+      onClick={() => setActive(item.label)}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
-    </a>
+    </Link>
   ));
 
   return (
