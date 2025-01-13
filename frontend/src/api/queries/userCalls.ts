@@ -1,5 +1,5 @@
 import {useQuery} from "react-query";
-
+import {jwtDecode} from "jwt-decode";
 interface LoginResponse {
   jwtToken: string;
 }
@@ -18,7 +18,10 @@ export const fetchLogin = async (email: string, password: string) => {
   }
   const data: LoginResponse = await response.json();
   const token = data.jwtToken;
+
   if (token) {
+    const decoded = jwtDecode(token);
+    localStorage.setItem("userId", decoded.sub || "");
     localStorage.setItem("token", token);
     window.location.href = "/home";
   } else {

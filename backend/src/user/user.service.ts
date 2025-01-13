@@ -1,12 +1,62 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { BudgetItem, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  async updateBudget(id: number, newItems: BudgetItem[]) {
+    console.log(newItems);
+    await this.prisma.budgetItem.deleteMany({
+      where: {
+        userId: id,
+      },
+    });
+
+    await this.prisma.budgetItem.createMany({
+      data: newItems.map((item) => ({
+        amount: item.amount,
+        userId: id,
+        type: item.type,
+      })),
+    });
+
+    // const items = await newItems.map((item) => {
+    //   return this.prisma.budgetItem.create({
+    //     data: {
+    //       amount: item.amount,
+    //       type: item.type,
+    //       budget: {
+    //         connect: {
+    //           userId: id,
+    //         },
+    //       },
+    //     },
+    //   });
+    // });
+
+    //console.log(items);
+    return { message: 'Budget updated' };
+  }
+
   async getUserById(id: number) {
+    if (!id) {
+      return { message: 'No user found' };
+    }
+    const user: User = await this.prisma.user.findUnique({
+      where: { id: id },
+      include: {
+        monthlyExpenses: true,
+        months: true,
+
+        defaultBudget: true,
+      },
+    });
+    console.log(`User: ${user}`);
+    return user;
+  }
+  async getUserInfo(id: number) {
     if (!id) {
       return { message: 'No user found' };
     }
@@ -15,16 +65,14 @@ export class UserService {
       include: {
         monthlyExpenses: true,
         months: true,
-        defaultBudget: {
-          include: {
-            budgetItems: true,
-          },
-        },
+
+        defaultBudget: true,
       },
     });
     console.log(`User: ${user}`);
     return user;
   }
+
   async addExpenses(id: number) {
     const expenses = await this.prisma.month.findMany({
       where: { userId: id },
@@ -41,14 +89,9 @@ export class UserService {
       where: { userId: id },
     });
 
-    const deleteBudget = this.prisma.budget.deleteMany({
-      where: { userId: id },
-    });
     const deleteBudgetItems = this.prisma.budgetItem.deleteMany({
       where: {
-        budget: {
-          userId: id,
-        },
+        userId: id,
       },
     });
 
@@ -63,7 +106,7 @@ export class UserService {
     const transaction = await this.prisma.$transaction([
       deleteExpenses,
       deleteBudgetItems,
-      deleteBudget,
+
       deleteMonths,
       deleteUser,
     ]);

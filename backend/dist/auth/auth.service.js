@@ -44,22 +44,12 @@ let AuthService = class AuthService {
                         create: [],
                     },
                     expectedDatePaycheck: body.dateOfPaycheck,
-                    defaultBudget: {
-                        create: {
-                            budgetItems: {
-                                create: [],
-                            },
-                        },
-                    },
+                    defaultBudget: { create: [] },
                 },
                 include: {
                     monthlyExpenses: true,
                     months: true,
-                    defaultBudget: {
-                        include: {
-                            budgetItems: true,
-                        },
-                    },
+                    defaultBudget: true,
                 },
             });
             return this.signJwt(user.id, user.email, user.firstName, user.lastName);

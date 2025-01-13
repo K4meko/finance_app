@@ -31,6 +31,9 @@ let UserController = class UserController {
             return { message: 'User not found' };
         }
     }
+    getUserBudgeting(user) {
+        return this.service.getUserInfo(user.id);
+    }
     FindUser(user) {
         return this.service.getUserById(user.id);
     }
@@ -39,6 +42,9 @@ let UserController = class UserController {
     }
     async DeleteUser(user) {
         this.service.deleteUser(user.id);
+    }
+    async UpdateBudget(user, newItems) {
+        return this.service.updateBudget(user.id, newItems);
     }
 };
 exports.UserController = UserController;
@@ -50,6 +56,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "Home", null);
 __decorate([
+    (0, common_2.Get)('get-user-info'),
+    __param(0, (0, decorator_1.GetUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], UserController.prototype, "getUserBudgeting", null);
+__decorate([
     (0, common_2.Get)('find-user'),
     __param(0, (0, decorator_1.GetUser)()),
     __metadata("design:type", Function),
@@ -57,7 +70,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UserController.prototype, "FindUser", null);
 __decorate([
-    (0, common_2.Get)('add-expenses'),
+    (0, common_2.Post)('add-expenses'),
     __param(0, (0, decorator_1.GetUser)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -70,6 +83,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "DeleteUser", null);
+__decorate([
+    (0, common_1.Put)('update-budget'),
+    __param(0, (0, decorator_1.GetUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "UpdateBudget", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.UseGuards)(guard_1.JwtGuard),
     (0, common_1.Controller)('user'),

@@ -1,27 +1,124 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {
+  Center,
   Container,
   Flex,
-  Group,
   Input,
   Text,
   TextInput,
   Title,
+  Card,
+  Button,
 } from "@mantine/core";
-import {Calendar} from "@mantine/dates";
+import {DatePicker} from "@mantine/dates";
+import {getUserInfo} from "../api/queries/getUserInfo";
+import {User, BudgetItem} from "../types/types";
+import BudgetComponent from "../components/BudgetComponent";
+import updateBudgetItems from "../api/queries/updateBudget";
 
+interface budgetinItem {
+  name: string;
+  amount: number;
+}
 function OptionsContent() {
   const [focused, setFocused] = useState(false);
-  const [value, setValue] = useState("");
-  const floating = value.trim().length !== 0 || focused || undefined;
+
+  const [budgetingItems, setBudgetingItems] = useState<BudgetItem[]>([]);
+  const [userInfo, setUserInfo] = useState<User | null>(null);
+  const [value, setValue] = useState<Date | null>(null);
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfo();
+        if (userInfo) {
+          setBudgetingItems(userInfo.defaultBudget || []);
+          if (userInfo.expectedDatePaycheck) {
+            setValue(new Date(userInfo.expectedDatePaycheck));
+          }
+        } else {
+          console.error("Failed to fetch user info:", userInfo);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchUserInfo();
+  }, []);
   return (
-    <Flex direction='column' gap={"sm"} align='center'>
-      <Flex direction='column' align='center' gap={"md"} w={"50%"}>
-        <Title order={4}>Salary</Title>
-        <Input w={"100%"} radius='md' placeholder='Enter your monthly salary' />
-        <Calendar size='xl' />
+    <Container size='lg' p='md'>
+      <Flex
+        direction='row'
+        gap='md'
+        align='start'
+        justify='space-between'
+        w='100%'
+      >
+        <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
+          <Title order={2} mb='md'>
+            Salary
+          </Title>
+          <Input w='100%' radius='md' placeholder='Enter your monthly salary' />
+          <Text w='100%' mt='md'>
+            When is your salary?
+          </Text>
+          <DatePicker
+            w='100%'
+            size='xl'
+            value={value}
+            onChange={setValue}
+            mt='md'
+          />
+          <Button m={"md"}>Submit</Button>
+        </Card>
+        <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
+          <Title order={2} mb='md'>
+            Budgeting
+          </Title>
+          <Input w='100%' radius='md' placeholder='Enter your monthly salary' />
+
+          {budgetingItems.length === 0 && (
+            <Center mt='md'>
+              <Text>No budgeting items found</Text>
+            </Center>
+          )}
+          {budgetingItems.map((item, index) => (
+            <BudgetComponent
+              key={index}
+              name={item.type}
+              amount={item.amount}
+              onDelete={() => {
+                setBudgetingItems(budgetingItems.filter((_, i) => i !== index));
+              }}
+            />
+          ))}
+          <Button
+            m={"xl"}
+            color={"violet"}
+            onClick={() =>
+              setBudgetingItems([...budgetingItems, {amount: 0, type: ""}])
+            }
+            variant={"light"}
+            style={{
+              borderColor: "transparent",
+              "&:hover": {
+                borderColor: "transparent",
+              },
+            }}
+          >
+            Add new
+          </Button>
+          <Button
+            onClick={() => {
+              console.log(budgetingItems);
+              updateBudgetItems(budgetingItems);
+            }}
+          >
+            Submit
+          </Button>
+        </Card>
       </Flex>
-    </Flex>
+    </Container>
   );
 }
 

@@ -17,24 +17,27 @@ model User {
   updatedAt DateTime @updatedAt
   months    Month[]
   expectedDatePaycheck DateTime?
+  salaryAmount Float?
   monthlyExpenses MonthlyExpense[]
-  defaultBudget Budget?
+  defaultBudget BudgetItem[]
 }
 
-model Budget {
-  id        Int      @id @default(autoincrement())
-  userId    Int     @unique
-  user      User     @relation(fields: [userId], references: [id])
-  budgetItems BudgetItem[]
-  month Month?
-}
+
 
 model BudgetItem {
   id        Int     @id @default(autoincrement())
   amount    Float
   type      String
-  budgetId  Int
-  budget    Budget  @relation(fields: [budgetId], references: [id])
+  User     User    @relation(fields: [userId], references: [id])
+  userId    Int
+
+}
+model MonthBudgetItem{
+    id        Int     @id @default(autoincrement())
+  amount    Float
+  type      String
+  Month     Month    @relation(fields: [monthId], references: [id])
+  monthId    Int
 }
 
 model MonthlyExpense {
@@ -50,8 +53,8 @@ model Month {
   userId    Int      
   user      User     @relation(fields: [userId], references: [id])
   year      Int
-  budget    Float
+  paycheck    Float //driv se jmenovalo budget 
   createdAt DateTime @default(now())
   budgetId  Int @unique
-  Budget   Budget   @relation(fields: [budgetId], references: [id])
+  budget   MonthBudgetItem[]
 }

@@ -1,8 +1,8 @@
-import { Controller, Delete, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Put, Req, UseGuards } from '@nestjs/common';
 import { Get, Post } from '@nestjs/common';
 import { GuardsConsumer } from '@nestjs/core/guards';
 import { AuthGuard } from '@nestjs/passport';
-import { User } from '@prisma/client';
+import { BudgetItem, User } from '@prisma/client';
 import { request } from 'express';
 import { get } from 'http';
 import { GetUser } from '../auth/decorator';
@@ -23,18 +23,26 @@ export class UserController {
       return { message: 'User not found' };
     }
   }
-
+  @Get('get-user-info')
+  getUserBudgeting(@GetUser() user: User) {
+    return this.service.getUserInfo(user.id);
+  }
   @Get('find-user')
   FindUser(@GetUser() user: User) {
     return this.service.getUserById(user.id);
   }
 
-  @Get('add-expenses')
+  @Post('add-expenses')
   async AddExpenses(@GetUser() user: User) {
     this.service.addExpenses(user.id);
   }
+
   @Delete('delete-user')
   async DeleteUser(@GetUser() user: User) {
     this.service.deleteUser(user.id);
+  }
+  @Put('update-budget')
+  async UpdateBudget(@GetUser() user: User, @Body() newItems: BudgetItem[]) {
+    return this.service.updateBudget(user.id, newItems);
   }
 }

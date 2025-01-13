@@ -44,22 +44,12 @@ export class AuthService {
             create: [],
           },
           expectedDatePaycheck: body.dateOfPaycheck,
-          defaultBudget: {
-            create: {
-              budgetItems: {
-                create: [],
-              },
-            },
-          },
+          defaultBudget: { create: [] },
         },
         include: {
           monthlyExpenses: true,
           months: true,
-          defaultBudget: {
-            include: {
-              budgetItems: true,
-            },
-          },
+          defaultBudget: true,
         },
       });
 

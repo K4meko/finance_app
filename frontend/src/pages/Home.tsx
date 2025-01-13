@@ -34,6 +34,8 @@ export function Home() {
   useEffect(() => {
     if (!token) {
       navigate("/signin");
+    } else {
+      console.log(token);
     }
   }, [token, navigate]);
 
