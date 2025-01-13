@@ -22,7 +22,16 @@ interface budgetinItem {
 }
 function OptionsContent() {
   const [focused, setFocused] = useState(false);
-
+  const handleUpdateBudgetItem = (
+    index: number,
+    name: string,
+    amount: number
+  ) => {
+    const updatedItems = budgetingItems.map((item, i) =>
+      i === index ? {...item, type: name, amount} : item
+    );
+    setBudgetingItems(updatedItems);
+  };
   const [budgetingItems, setBudgetingItems] = useState<BudgetItem[]>([]);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [value, setValue] = useState<Date | null>(null);
@@ -90,6 +99,9 @@ function OptionsContent() {
               onDelete={() => {
                 setBudgetingItems(budgetingItems.filter((_, i) => i !== index));
               }}
+              onUpdate={(name, amount) =>
+                handleUpdateBudgetItem(index, name, amount)
+              }
             />
           ))}
           <Button
