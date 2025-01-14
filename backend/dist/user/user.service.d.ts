@@ -22,23 +22,23 @@ export declare class UserService {
     getUserInfo(id: number): Promise<({
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -55,8 +55,8 @@ export declare class UserService {
     }>;
     addExpenses(id: number): Promise<{
         id: number;
-        createdAt: Date;
         userId: number;
+        createdAt: Date;
         year: number;
         paycheck: number;
         budgetId: number;
