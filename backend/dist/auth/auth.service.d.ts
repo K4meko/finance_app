@@ -8,7 +8,6 @@ export declare class AuthService {
     private jwtService;
     private configService;
     constructor(prisma: PrismaService, jwtService: JwtService, configService: ConfigService);
-    getHello(): string;
     signup(body: AuthDto): Promise<{
         jwtToken: string;
     }>;

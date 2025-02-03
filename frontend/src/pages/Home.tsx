@@ -21,6 +21,9 @@ import HomeContent from "./HomeContent.tsx";
 import CalendarContent from "./CalendarContent.tsx";
 import SettingsContent from "./SettingsContent.tsx";
 import OptionsContent from "./OptionsContent.tsx";
+import {jwtDecode} from "jwt-decode";
+import {JWTPayload} from "../types/types.ts";
+import ExpensesContent from "./ExpensesContent.tsx";
 
 export function Home() {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
@@ -30,13 +33,31 @@ export function Home() {
   const token = localStorage.getItem("token");
 
   const {modalOpened, closeModal} = useModalStore();
-
-  useEffect(() => {
+  const validateToken = () => {
     if (!token) {
+      localStorage.clear();
       navigate("/signin");
-    } else {
-      console.log(token);
+      return false;
     }
+
+    try {
+      const decoded = jwtDecode<JWTPayload>(token);
+      const currentTime = Date.now() / 1000;
+
+      if (decoded.exp < currentTime) {
+        localStorage.clear();
+        navigate("/signin");
+        return false;
+      }
+      return true;
+    } catch (error) {
+      localStorage.clear();
+      navigate("/signin");
+      return false;
+    }
+  };
+  useEffect(() => {
+    validateToken();
   }, [token, navigate]);
 
   return (
@@ -70,7 +91,7 @@ export function Home() {
             <Route path='/options' element={<OptionsContent />} />
             <Route path='/settings' element={<SettingsContent />} />
             <Route path='/calendar' element={<CalendarContent />} />
-            <Route path='/expenses' element={<p>skibidi bop bop </p>} />
+            <Route path='/expenses' element={<ExpensesContent />} />
           </Routes>
         </AppShell.Main>
       </AppShell>

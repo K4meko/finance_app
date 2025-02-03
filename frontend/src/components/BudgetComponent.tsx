@@ -1,4 +1,4 @@
-import {Button, Card, TextInput} from "@mantine/core";
+import {Button, Card, Flex, TextInput} from "@mantine/core";
 
 interface BudgetComponentProps {
   name: string;
@@ -14,24 +14,40 @@ function BudgetComponent({
   onUpdate,
 }: BudgetComponentProps) {
   return (
-    <Card>
-      <TextInput
-        placeholder='Name'
-        value={name}
-        onChange={e => onUpdate(e.currentTarget.value, amount)}
-      />
-      <TextInput
-        placeholder='Amount'
-        value={amount}
-        onChange={e => {
-          const value = e.currentTarget.value;
-          const parsedValue = parseFloat(value);
-          if (!isNaN(parsedValue) || value === "") {
-            onUpdate(name, value === "" ? 0 : parsedValue);
-          }
-        }}
-      />
-      <Button onClick={onDelete}>Remove</Button>
+    <Card shadow='sm' p='md' radius='md' withBorder>
+      <Flex direction='column' gap='md'>
+        <TextInput
+          label='Name'
+          placeholder='Enter category name'
+          value={name}
+          onChange={e => onUpdate(e.currentTarget.value, amount)}
+          radius='md'
+          size='md'
+        />
+        <TextInput
+          label='Amount'
+          placeholder='Enter amount'
+          value={amount}
+          onChange={e => {
+            const value = e.currentTarget.value;
+            const parsedValue = parseFloat(value);
+            if (!isNaN(parsedValue) || value === "") {
+              onUpdate(name, value === "" ? 0 : parsedValue);
+            }
+          }}
+          radius='md'
+          size='md'
+        />
+        <Button
+          color='red'
+          variant='light'
+          onClick={onDelete}
+          radius='md'
+          mt='sm'
+        >
+          Remove
+        </Button>
+      </Flex>
     </Card>
   );
 }

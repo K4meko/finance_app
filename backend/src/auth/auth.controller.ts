@@ -17,8 +17,4 @@ export class AuthController {
   signup(@Body() body: AuthDto) {
     return this.authService.signup(body);
   }
-  @Get('hello')
-  hello() {
-    return this.authService.getHello();
-  }
 }

@@ -14,7 +14,8 @@ import {DatePicker} from "@mantine/dates";
 import {getUserInfo} from "../api/queries/getUserInfo";
 import {User, BudgetItem} from "../types/types";
 import BudgetComponent from "../components/BudgetComponent";
-import updateBudgetItems from "../api/queries/updateBudget";
+
+import UpdateSettings from "../api/queries/updateBudget";
 
 interface budgetinItem {
   name: string;
@@ -35,6 +36,7 @@ function OptionsContent() {
   const [budgetingItems, setBudgetingItems] = useState<BudgetItem[]>([]);
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [value, setValue] = useState<Date | null>(null);
+  const [salaryDate, setSalaryDate] = useState<string | null>(null);
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -78,13 +80,19 @@ function OptionsContent() {
             onChange={setValue}
             mt='md'
           />
-          <Button m={"md"}>Submit</Button>
+          <Button
+            m={"md"}
+            onClick={() => {
+              UpdateSettings({expectedDatePaycheck: value});
+            }}
+          >
+            Submit
+          </Button>
         </Card>
         <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
           <Title order={2} mb='md'>
             Budgeting
           </Title>
-          <Input w='100%' radius='md' placeholder='Enter your monthly salary' />
 
           {budgetingItems.length === 0 && (
             <Center mt='md'>
@@ -123,7 +131,7 @@ function OptionsContent() {
           <Button
             onClick={() => {
               console.log(budgetingItems);
-              updateBudgetItems(budgetingItems);
+              UpdateSettings({newItems: budgetingItems});
             }}
           >
             Submit

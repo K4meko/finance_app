@@ -6,6 +6,34 @@ export declare class UserService {
     updateBudget(id: number, newItems: BudgetItem[]): Promise<{
         message: string;
     }>;
+    updatePaycheck(id: number, expectedDatePaycheck: Date): Promise<{
+        id: number;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        password: string;
+        createdAt: Date;
+        updatedAt: Date;
+        expectedDatePaycheck: Date | null;
+        salaryAmount: number | null;
+    }>;
+    updateInformation(id: number, data: {
+        lastName?: string;
+        firstName?: string;
+        email?: string;
+        password?: string;
+        oldPassword?: string;
+    }): Promise<{
+        id: number;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        password: string;
+        createdAt: Date;
+        updatedAt: Date;
+        expectedDatePaycheck: Date | null;
+        salaryAmount: number | null;
+    }>;
     getUserById(id: number): Promise<{
         id: number;
         email: string;
@@ -22,23 +50,23 @@ export declare class UserService {
     getUserInfo(id: number): Promise<({
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -53,10 +81,42 @@ export declare class UserService {
     }) | {
         message: string;
     }>;
+    getSettings(id: number): Promise<{
+        months: {
+            id: number;
+            userId: number;
+            createdAt: Date;
+            year: number;
+            paycheck: number;
+            budgetId: number;
+        }[];
+        monthlyExpenses: {
+            id: number;
+            amount: number;
+            type: string;
+            userId: number;
+        }[];
+        defaultBudget: {
+            id: number;
+            amount: number;
+            type: string;
+            userId: number;
+        }[];
+    } & {
+        id: number;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        password: string;
+        createdAt: Date;
+        updatedAt: Date;
+        expectedDatePaycheck: Date | null;
+        salaryAmount: number | null;
+    }>;
     addExpenses(id: number): Promise<{
         id: number;
-        createdAt: Date;
         userId: number;
+        createdAt: Date;
         year: number;
         paycheck: number;
         budgetId: number;

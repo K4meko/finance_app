@@ -3,39 +3,26 @@ import { UserService } from './user.service';
 export declare class UserController {
     private service;
     constructor(service: UserService);
-    Home(user: User): Promise<{
-        id: number;
-        email: string;
-        firstName: string | null;
-        lastName: string | null;
-        password: string;
-        createdAt: Date;
-        updatedAt: Date;
-        expectedDatePaycheck: Date | null;
-        salaryAmount: number | null;
-    } | {
-        message: string;
-    }>;
     getUserBudgeting(user: User): Promise<({
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -50,7 +37,15 @@ export declare class UserController {
     }) | {
         message: string;
     }>;
-    FindUser(user: User): Promise<{
+    AddExpenses(user: User): Promise<{
+        id: number;
+        userId: number;
+        createdAt: Date;
+        year: number;
+        paycheck: number;
+        budgetId: number;
+    }[]>;
+    DeleteUser(user: User): Promise<[import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, {
         id: number;
         email: string;
         firstName: string | null;
@@ -60,12 +55,36 @@ export declare class UserController {
         updatedAt: Date;
         expectedDatePaycheck: Date | null;
         salaryAmount: number | null;
-    } | {
+    }] | {
         message: string;
     }>;
-    AddExpenses(user: User): Promise<void>;
-    DeleteUser(user: User): Promise<void>;
-    UpdateBudget(user: User, newItems: BudgetItem[]): Promise<{
-        message: string;
+    UpdateInformation(user: User, body: {
+        lastName?: string;
+        firstName?: string;
+        email?: string;
+        password?: string;
+        oldPassword?: string;
+    }): Promise<{
+        id: number;
+        email: string;
+        firstName: string | null;
+        lastName: string | null;
+        password: string;
+        createdAt: Date;
+        updatedAt: Date;
+        expectedDatePaycheck: Date | null;
+        salaryAmount: number | null;
+    }>;
+    UpdateSettings(user: User, body: {
+        newItems?: BudgetItem[];
+        expectedDatePaycheck?: Date;
+    }): Promise<{
+        items: {
+            id: number;
+            amount: number;
+            type: string;
+            userId: number;
+        }[];
+        paycheck: Date;
     }>;
 }

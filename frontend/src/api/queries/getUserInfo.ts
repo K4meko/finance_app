@@ -1,6 +1,6 @@
 import {User} from "../../types/types";
 export const getUserInfo = async () => {
-  const response = await fetch(`http://localhost:3000/user/get-user-info`, {
+  const response = await fetch(`http://localhost:3000/user/me`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

@@ -1,4 +1,3 @@
-import {useQuery} from "react-query";
 import {jwtDecode} from "jwt-decode";
 interface LoginResponse {
   jwtToken: string;

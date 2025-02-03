@@ -22,9 +22,6 @@ let AuthService = class AuthService {
         this.jwtService = jwtService;
         this.configService = configService;
     }
-    getHello() {
-        return 'Hello World!';
-    }
     async signup(body) {
         const hash = await argon.hash(body.password);
         try {

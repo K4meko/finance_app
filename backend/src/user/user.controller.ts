@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Put, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Patch,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Get, Post } from '@nestjs/common';
 import { GuardsConsumer } from '@nestjs/core/guards';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,35 +22,54 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private service: UserService) {}
 
-  @Get('home')
-  async Home(@GetUser() user: User) {
-    const foundUser = await this.service.getUserById(user.id);
-    if (foundUser) {
-      return foundUser;
-    } else {
-      return { message: 'User not found' };
-    }
-  }
-  @Get('get-user-info')
+  @Get('me')
   getUserBudgeting(@GetUser() user: User) {
     return this.service.getUserInfo(user.id);
   }
-  @Get('find-user')
-  FindUser(@GetUser() user: User) {
-    return this.service.getUserById(user.id);
-  }
 
-  @Post('add-expenses')
+  @Post('expense')
   async AddExpenses(@GetUser() user: User) {
-    this.service.addExpenses(user.id);
+    return this.service.addExpenses(user.id);
   }
 
-  @Delete('delete-user')
+  @Delete()
   async DeleteUser(@GetUser() user: User) {
-    this.service.deleteUser(user.id);
+    return this.service.deleteUser(user.id);
   }
-  @Put('update-budget')
-  async UpdateBudget(@GetUser() user: User, @Body() newItems: BudgetItem[]) {
-    return this.service.updateBudget(user.id, newItems);
+
+  @Put('update')
+  async UpdateInformation(
+    @GetUser() user: User,
+    @Body()
+    body: {
+      lastName?: string;
+      firstName?: string;
+      email?: string;
+      password?: string;
+      oldPassword?: string;
+    },
+  ) {
+    return this.service.updateInformation(user.id, body);
+  }
+
+  @Put('settings')
+  async UpdateSettings(
+    @GetUser() user: User,
+    @Body() body: { newItems?: BudgetItem[]; expectedDatePaycheck?: Date },
+  ) {
+    // console.log(newItems, expectedDatePaycheck);
+    if (body.newItems) {
+      // console.log(`printing Budget: ${newItems}`);
+      await this.service.updateBudget(user.id, body.newItems);
+    }
+    if (body.expectedDatePaycheck) {
+      // console.log(`printing Paycheck: ${expectedDatePaycheck}`);
+      await this.service.updatePaycheck(user.id, body.expectedDatePaycheck);
+    }
+    const updatedUser = await this.service.getSettings(user.id);
+    return {
+      items: updatedUser.defaultBudget,
+      paycheck: updatedUser.expectedDatePaycheck,
+    };
   }
 }

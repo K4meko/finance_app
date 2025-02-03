@@ -1,13 +1,16 @@
 import {BudgetItem} from "../../types/types";
 
-const updateBudgetItems = async (budgetItems: BudgetItem[]) => {
-  const response = await fetch(`http://localhost:3000/user/update-budget`, {
+const UpdateSettings = async (input: {
+  newItems?: BudgetItem[];
+  expectedDatePaycheck?: Date | null;
+}) => {
+  const response = await fetch(`http://localhost:3000/user/settings`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(budgetItems),
+    body: JSON.stringify(input),
   });
   if (!response.ok) {
     console.log(response);
@@ -16,4 +19,4 @@ const updateBudgetItems = async (budgetItems: BudgetItem[]) => {
   const data = await response;
   return data;
 };
-export default updateBudgetItems;
+export default UpdateSettings;

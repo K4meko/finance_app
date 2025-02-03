@@ -28,9 +28,6 @@ let AuthController = class AuthController {
     signup(body) {
         return this.authService.signup(body);
     }
-    hello() {
-        return this.authService.getHello();
-    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -48,12 +45,6 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.AuthDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "signup", null);
-__decorate([
-    (0, common_1.Get)('hello'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], AuthController.prototype, "hello", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

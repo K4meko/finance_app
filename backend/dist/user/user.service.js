@@ -12,12 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const argon = require("argon2");
 let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
     }
     async updateBudget(id, newItems) {
-        console.log(newItems);
         await this.prisma.budgetItem.deleteMany({
             where: {
                 userId: id,
@@ -31,6 +31,39 @@ let UserService = class UserService {
             })),
         });
         return { message: 'Budget updated' };
+    }
+    async updatePaycheck(id, expectedDatePaycheck) {
+        return this.prisma.user.update({
+            where: { id: id },
+            data: {
+                expectedDatePaycheck: expectedDatePaycheck,
+            },
+        });
+    }
+    async updateInformation(id, data) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: id },
+        });
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        let updateData = {
+            email: data.email,
+            firstName: data.firstName,
+            lastName: data.lastName,
+        };
+        if (user.password && data.oldPassword) {
+            const pwMatch = await argon.verify(user.password, data.oldPassword);
+            if (!pwMatch) {
+                throw new common_1.UnauthorizedException('Invalid password');
+            }
+            updateData.password = await argon.hash(data.password);
+        }
+        const updatedUser = await this.prisma.user.update({
+            where: { id },
+            data: updateData,
+        });
+        return updatedUser;
     }
     async getUserById(id) {
         if (!id) {
@@ -61,6 +94,16 @@ let UserService = class UserService {
         });
         console.log(`User: ${user}`);
         return user;
+    }
+    async getSettings(id) {
+        return this.prisma.user.findUnique({
+            where: { id: id },
+            include: {
+                monthlyExpenses: true,
+                months: true,
+                defaultBudget: true,
+            },
+        });
     }
     async addExpenses(id) {
         const expenses = await this.prisma.month.findMany({

@@ -10,5 +10,4 @@ export declare class AuthController {
     signup(body: AuthDto): Promise<{
         jwtToken: string;
     }>;
-    hello(): string;
 }

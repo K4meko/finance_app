@@ -20,10 +20,6 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  getHello(): string {
-    return 'Hello World!';
-  }
-
   async signup(body: AuthDto) {
     const hash = await argon.hash(body.password);
     try {

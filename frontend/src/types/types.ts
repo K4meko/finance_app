@@ -17,7 +17,12 @@ export interface BudgetItem {
   amount: number;
   type: string;
 }
-
+export interface JWTPayload {
+  exp: number;
+  // Add other JWT claims you expect
+  iat?: number;
+  sub?: string;
+}
 export interface MonthBudgetItem {
   amount: number;
   type: string;
