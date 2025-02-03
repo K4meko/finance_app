@@ -21,6 +21,7 @@ import {Header} from "../components/Header";
 import logo from "../assets/Budgetly.svg";
 import {fetchLogin} from "../api/queries/userCalls";
 import {useState} from "react";
+import {fetchRegister} from "../api/queries/registerCall";
 export function SignIn(props: PaperProps) {
   const [error, setError] = useState("");
   const [type, toggle] = useToggle(["login", "register"]);
@@ -43,16 +44,16 @@ export function SignIn(props: PaperProps) {
 
   return (
     <Flex
-      direction='column'
-      align='center'
-      justify='flex-start'
+      direction="column"
+      align="center"
+      justify="flex-start"
       style={{width: "100vw", height: "100vh"}}
     >
       <Header />
       <Space h={250} />
-      <Paper radius='md' p='xl' withBorder {...props}>
+      <Paper radius="md" p="xl" withBorder {...props}>
         <Center>
-          <Text size='lg' fw={600} mb={20} style={{alignSelf: "center"}}>
+          <Text size="lg" fw={600} mb={20} style={{alignSelf: "center"}}>
             Welcome to Budgetly
           </Text>
         </Center>
@@ -60,32 +61,32 @@ export function SignIn(props: PaperProps) {
           <Stack>
             {type === "register" && (
               <TextInput
-                label='Name'
-                placeholder='Your name'
+                label="Name"
+                placeholder="Your name"
                 value={form.values.name}
                 onChange={event =>
                   form.setFieldValue("name", event.currentTarget.value)
                 }
-                radius='md'
+                radius="md"
               />
             )}
 
             <TextInput
               required
-              label='Email'
-              placeholder='hello@mantine.dev'
+              label="Email"
+              placeholder="hello@mantine.dev"
               value={form.values.email}
               onChange={event =>
                 form.setFieldValue("email", event.currentTarget.value)
               }
               error={form.errors.email && "Invalid email"}
-              radius='md'
+              radius="md"
             />
 
             <PasswordInput
               required
-              label='Password'
-              placeholder='Your password'
+              label="Password"
+              placeholder="Your password"
               value={form.values.password}
               onChange={event =>
                 form.setFieldValue("password", event.currentTarget.value)
@@ -94,17 +95,17 @@ export function SignIn(props: PaperProps) {
                 form.errors.password &&
                 "Password should include at least 6 characters"
               }
-              radius='md'
+              radius="md"
               styles={{root: {marginBottom: -10}}}
             />
             {error && (
-              <Text color='red' size='xs'>
+              <Text color="red" size="xs">
                 {error === "Forbidden" ? "Invalid email or password" : error}
               </Text>
             )}
             {type === "register" && (
               <Checkbox
-                label='I accept terms and conditions'
+                label="I accept terms and conditions"
                 checked={form.values.terms}
                 onChange={event =>
                   form.setFieldValue("terms", event.currentTarget.checked)
@@ -113,27 +114,35 @@ export function SignIn(props: PaperProps) {
             )}
           </Stack>
 
-          <Group justify='space-between' mt='xl'>
+          <Group justify="space-between" mt="xl">
             <Anchor
-              component='button'
-              type='button'
-              c='dimmed'
+              component="button"
+              type="button"
+              c="dimmed"
               onClick={() => toggle()}
-              size='xs'
+              size="xs"
             >
               {type === "register"
                 ? "Already have an account? Login"
                 : "Don't have an account? Register"}
             </Anchor>
             <Button
-              type='submit'
-              radius='xl'
+              type="submit"
+              radius="xl"
               onClick={async () => {
-                const data = await fetchLogin(
-                  form.values.email,
-                  form.values.password
-                );
-                setError(data || "");
+                if (type === "login") {
+                  const data = await fetchLogin(
+                    form.values.email,
+                    form.values.password
+                  );
+                  setError(data || "");
+                } else {
+                  const data = await fetchRegister(
+                    form.values.email,
+                    form.values.password
+                  );
+                  setError(data || "");
+                }
               }}
             >
               {upperFirst(type)}
