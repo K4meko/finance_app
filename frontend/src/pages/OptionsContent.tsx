@@ -57,88 +57,100 @@ function OptionsContent() {
     fetchUserInfo();
   }, []);
   return (
-    <Container size='lg' p='md'>
-      <Flex
-        direction='row'
-        gap='md'
-        align='start'
-        justify='space-between'
-        w='100%'
-      >
-        <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
-          <Title order={2} mb='md'>
-            Salary
-          </Title>
-          <Input w='100%' radius='md' placeholder='Enter your monthly salary' />
-          <Text w='100%' mt='md'>
-            When is your salary?
-          </Text>
-          <DatePicker
-            w='100%'
-            size='xl'
-            value={value}
-            onChange={setValue}
-            mt='md'
-          />
-          <Button
-            m={"md"}
-            onClick={() => {
-              UpdateSettings({expectedDatePaycheck: value});
-            }}
-          >
-            Submit
-          </Button>
-        </Card>
-        <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
-          <Title order={2} mb='md'>
-            Budgeting
-          </Title>
+    <>
+      <Center mb={"lg"}>
+        <Title order={1}>Options</Title>
+      </Center>
 
-          {budgetingItems.length === 0 && (
-            <Center mt='md'>
-              <Text>No budgeting items found</Text>
-            </Center>
-          )}
-          {budgetingItems.map((item, index) => (
-            <BudgetComponent
-              key={index}
-              name={item.type}
-              amount={item.amount}
-              onDelete={() => {
-                setBudgetingItems(budgetingItems.filter((_, i) => i !== index));
-              }}
-              onUpdate={(name, amount) =>
-                handleUpdateBudgetItem(index, name, amount)
-              }
+      <Container size='lg' p='md'>
+        <Flex
+          direction='row'
+          gap='md'
+          align='start'
+          justify='space-between'
+          w='100%'
+        >
+          <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
+            <Title order={2} mb='md'>
+              Salary
+            </Title>
+            <Input
+              w='100%'
+              radius='md'
+              placeholder='Enter your monthly salary'
             />
-          ))}
-          <Button
-            m={"xl"}
-            color={"violet"}
-            onClick={() =>
-              setBudgetingItems([...budgetingItems, {amount: 0, type: ""}])
-            }
-            variant={"light"}
-            style={{
-              borderColor: "transparent",
-              "&:hover": {
+            <Text w='100%' mt='md'>
+              When is your salary?
+            </Text>
+            <DatePicker
+              w='100%'
+              size='xl'
+              value={value}
+              onChange={setValue}
+              mt='md'
+            />
+            <Button
+              m={"md"}
+              onClick={() => {
+                UpdateSettings({expectedDatePaycheck: value});
+              }}
+            >
+              Submit
+            </Button>
+          </Card>
+          <Card shadow='sm' p='lg' radius='md' withBorder w='48%'>
+            <Title order={2} mb='md'>
+              Budgeting
+            </Title>
+
+            {budgetingItems.length === 0 && (
+              <Center mt='md'>
+                <Text>No budgeting items found</Text>
+              </Center>
+            )}
+            {budgetingItems.map((item, index) => (
+              <BudgetComponent
+                key={index}
+                name={item.type}
+                amount={item.amount}
+                onDelete={() => {
+                  setBudgetingItems(
+                    budgetingItems.filter((_, i) => i !== index)
+                  );
+                }}
+                onUpdate={(name, amount) =>
+                  handleUpdateBudgetItem(index, name, amount)
+                }
+              />
+            ))}
+            <Button
+              m={"xl"}
+              color={"violet"}
+              onClick={() =>
+                setBudgetingItems([...budgetingItems, {amount: 0, type: ""}])
+              }
+              variant={"light"}
+              style={{
                 borderColor: "transparent",
-              },
-            }}
-          >
-            Add new
-          </Button>
-          <Button
-            onClick={() => {
-              console.log(budgetingItems);
-              UpdateSettings({newItems: budgetingItems});
-            }}
-          >
-            Submit
-          </Button>
-        </Card>
-      </Flex>
-    </Container>
+                "&:hover": {
+                  borderColor: "transparent",
+                },
+              }}
+            >
+              Add new
+            </Button>
+            <Button
+              onClick={() => {
+                console.log(budgetingItems);
+                UpdateSettings({newItems: budgetingItems});
+              }}
+            >
+              Submit
+            </Button>
+          </Card>
+        </Flex>
+      </Container>
+    </>
   );
 }
 

@@ -44,6 +44,12 @@ function BudgetComponent({
           onClick={onDelete}
           radius='md'
           mt='sm'
+          style={{
+            borderColor: "transparent",
+            "&:hover": {
+              borderColor: "red",
+            },
+          }}
         >
           Remove
         </Button>
