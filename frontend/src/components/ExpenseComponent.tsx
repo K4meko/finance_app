@@ -36,7 +36,7 @@ export function ExpenseComponent({
           style={{flex: 1}}
         />
         <ActionIcon color='red' onClick={onDelete} variant='subtle'>
-          <IconX size='1.125rem' />
+          <IconX onClick={onDelete} size='1.125rem' />
         </ActionIcon>
       </Flex>
     </Card>

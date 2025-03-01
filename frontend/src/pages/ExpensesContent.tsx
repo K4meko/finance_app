@@ -37,8 +37,16 @@ function ExpensesContent() {
               key={index}
               name={expense.type}
               amount={expense.amount}
-              onUpdate={() => {}}
-              onDelete={() => {}}
+              onUpdate={(newText, newAmount) => {
+                expense.type = newText;
+                expense.amount = newAmount;
+                console.log("Updated expense:", expense);
+                setUserExpenses([...userExpenses]);
+              }}
+              onDelete={() => {
+                let newUE = userExpenses.filter((_, i) => i !== index);
+                setUserExpenses(newUE);
+              }}
             />
           ))}
           <Button

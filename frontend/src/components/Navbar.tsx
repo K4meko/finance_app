@@ -46,14 +46,7 @@ export function Navbar() {
         <a
           href='#'
           className={classes.link}
-          onClick={event => event.preventDefault()}
-        >
-          <IconSwitchHorizontal className={classes.linkIcon} stroke={1.5} />
-          <span>Change account</span>
-        </a>
-        <a
-          href='#'
-          className={classes.link}
+          style={{marginTop: "10px", marginBottom: "10px"}}
           onClick={event => {
             event.preventDefault();
             openModal();
