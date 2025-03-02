@@ -47,7 +47,7 @@ let UserService = class UserService {
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
-        let updateData = {
+        const updateData = {
             email: data.email,
             firstName: data.firstName,
             lastName: data.lastName,
@@ -112,9 +112,15 @@ let UserService = class UserService {
         console.log(`Expenses: ${expenses}`);
         return expenses;
     }
+    async updateExpenses(new_expenses, userId) {
+        await this.prisma.month.updateMany({
+            data: new_expenses,
+            where: { userId },
+        });
+    }
     async deleteUser(id) {
         console.log(`Deleting user with id: ${id}`);
-        if (!id || id === undefined) {
+        if (!id || id === undefined || id === null) {
             return { message: 'No user found' };
         }
         const deleteExpenses = this.prisma.monthlyExpense.deleteMany({

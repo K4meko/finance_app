@@ -10,7 +10,7 @@ import {
 import { Get, Post } from '@nestjs/common';
 import { GuardsConsumer } from '@nestjs/core/guards';
 import { AuthGuard } from '@nestjs/passport';
-import { BudgetItem, User } from '@prisma/client';
+import { BudgetItem, MonthlyExpense, User } from '@prisma/client';
 import { request } from 'express';
 import { get } from 'http';
 import { GetUser } from '../auth/decorator';
@@ -51,7 +51,13 @@ export class UserController {
   ) {
     return this.service.updateInformation(user.id, body);
   }
-
+  @Put('expenses')
+  async UpdateExpenses(
+    @GetUser() user: User,
+    @Body() body: { new_expenses: MonthlyExpense[] },
+  ) {
+    await this.service.updateExpenses(body.new_expenses, user.id);
+  }
   @Put('settings')
   async UpdateSettings(
     @GetUser() user: User,

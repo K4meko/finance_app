@@ -1,4 +1,4 @@
-import { BudgetItem } from '@prisma/client';
+import { BudgetItem, MonthlyExpense } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 export declare class UserService {
     private prisma;
@@ -50,23 +50,23 @@ export declare class UserService {
     getUserInfo(id: number): Promise<({
         months: {
             id: number;
-            userId: number;
             createdAt: Date;
+            userId: number;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
         defaultBudget: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
     } & {
         id: number;
@@ -84,23 +84,23 @@ export declare class UserService {
     getSettings(id: number): Promise<{
         months: {
             id: number;
-            userId: number;
             createdAt: Date;
+            userId: number;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
         defaultBudget: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
     } & {
         id: number;
@@ -115,12 +115,13 @@ export declare class UserService {
     }>;
     addExpenses(id: number): Promise<{
         id: number;
-        userId: number;
         createdAt: Date;
+        userId: number;
         year: number;
         paycheck: number;
         budgetId: number;
     }[]>;
+    updateExpenses(new_expenses: MonthlyExpense[], userId: number): Promise<void>;
     deleteUser(id: number): Promise<[import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, {
         id: number;
         email: string;

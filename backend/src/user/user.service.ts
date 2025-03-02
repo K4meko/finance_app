@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { BudgetItem, User } from '@prisma/client';
+import { BudgetItem, MonthlyExpense, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as argon from 'argon2';
 
@@ -56,7 +56,7 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    let updateData: any = {
+    const updateData: any = {
       email: data.email,
       firstName: data.firstName,
       lastName: data.lastName,
@@ -128,9 +128,15 @@ export class UserService {
     console.log(`Expenses: ${expenses}`);
     return expenses;
   }
+  async updateExpenses(new_expenses: MonthlyExpense[], userId: number) {
+    await this.prisma.month.updateMany({
+      data: new_expenses,
+      where: { userId },
+    });
+  }
   async deleteUser(id: number) {
     console.log(`Deleting user with id: ${id}`);
-    if (!id || id === undefined) {
+    if (!id || id === undefined || id === null) {
       return { message: 'No user found' };
     }
     const deleteExpenses = this.prisma.monthlyExpense.deleteMany({

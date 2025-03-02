@@ -1,4 +1,4 @@
-import { BudgetItem, User } from '@prisma/client';
+import { BudgetItem, MonthlyExpense, User } from '@prisma/client';
 import { UserService } from './user.service';
 export declare class UserController {
     private service;
@@ -6,23 +6,23 @@ export declare class UserController {
     getUserBudgeting(user: User): Promise<({
         months: {
             id: number;
-            userId: number;
             createdAt: Date;
+            userId: number;
             year: number;
             paycheck: number;
             budgetId: number;
         }[];
         monthlyExpenses: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
         defaultBudget: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
     } & {
         id: number;
@@ -39,8 +39,8 @@ export declare class UserController {
     }>;
     AddExpenses(user: User): Promise<{
         id: number;
-        userId: number;
         createdAt: Date;
+        userId: number;
         year: number;
         paycheck: number;
         budgetId: number;
@@ -75,15 +75,18 @@ export declare class UserController {
         expectedDatePaycheck: Date | null;
         salaryAmount: number | null;
     }>;
+    UpdateExpenses(user: User, body: {
+        new_expenses: MonthlyExpense[];
+    }): Promise<void>;
     UpdateSettings(user: User, body: {
         newItems?: BudgetItem[];
         expectedDatePaycheck?: Date;
     }): Promise<{
         items: {
             id: number;
-            amount: number;
-            type: string;
             userId: number;
+            type: string;
+            amount: number;
         }[];
         paycheck: Date;
     }>;

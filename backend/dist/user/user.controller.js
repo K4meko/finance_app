@@ -34,6 +34,9 @@ let UserController = class UserController {
     async UpdateInformation(user, body) {
         return this.service.updateInformation(user.id, body);
     }
+    async UpdateExpenses(user, body) {
+        await this.service.updateExpenses(body.new_expenses, user.id);
+    }
     async UpdateSettings(user, body) {
         if (body.newItems) {
             await this.service.updateBudget(user.id, body.newItems);
@@ -78,6 +81,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "UpdateInformation", null);
+__decorate([
+    (0, common_1.Put)('expenses'),
+    __param(0, (0, decorator_1.GetUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "UpdateExpenses", null);
 __decorate([
     (0, common_1.Put)('settings'),
     __param(0, (0, decorator_1.GetUser)()),
