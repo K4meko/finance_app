@@ -50,23 +50,35 @@ export declare class UserService {
     getUserInfo(id: number): Promise<({
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
+            timestamp: string;
             year: number;
             paycheck: number;
-            budgetId: number;
+            budgetId: number | null;
         }[];
-        monthlyExpenses: {
-            id: number;
-            userId: number;
-            type: string;
+        monthlyExpenses: ({
+            month: {
+                id: number;
+                userId: number;
+                createdAt: Date;
+                timestamp: string;
+                year: number;
+                paycheck: number;
+                budgetId: number | null;
+            };
+        } & {
+            id: string;
             amount: number;
-        }[];
+            type: string;
+            userId: number;
+            monthId: number;
+        })[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -84,23 +96,25 @@ export declare class UserService {
     getSettings(id: number): Promise<{
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
+            timestamp: string;
             year: number;
             paycheck: number;
-            budgetId: number;
+            budgetId: number | null;
         }[];
         monthlyExpenses: {
-            id: number;
-            userId: number;
-            type: string;
+            id: string;
             amount: number;
+            type: string;
+            userId: number;
+            monthId: number;
         }[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -115,13 +129,32 @@ export declare class UserService {
     }>;
     addExpenses(id: number): Promise<{
         id: number;
-        createdAt: Date;
         userId: number;
+        createdAt: Date;
+        timestamp: string;
         year: number;
         paycheck: number;
-        budgetId: number;
+        budgetId: number | null;
     }[]>;
-    updateExpenses(new_expenses: MonthlyExpense[], userId: number): Promise<void>;
+    updateExpenses(new_expenses: MonthlyExpense[], userId: number, monthId: number): Promise<void>;
+    findMonthByISO(userId: number, monthISO: string): Promise<{
+        id: number;
+        userId: number;
+        createdAt: Date;
+        timestamp: string;
+        year: number;
+        paycheck: number;
+        budgetId: number | null;
+    }>;
+    createMonth(userId: number, monthISO: string): Promise<{
+        id: number;
+        userId: number;
+        createdAt: Date;
+        timestamp: string;
+        year: number;
+        paycheck: number;
+        budgetId: number | null;
+    }>;
     deleteUser(id: number): Promise<[import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, {
         id: number;
         email: string;

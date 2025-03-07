@@ -35,7 +35,19 @@ let UserController = class UserController {
         return this.service.updateInformation(user.id, body);
     }
     async UpdateExpenses(user, body) {
-        await this.service.updateExpenses(body.new_expenses, user.id);
+        let month;
+        body.new_expenses = body.new_expenses.map((expense) => {
+            delete expense.month;
+            return {
+                ...expense,
+                userId: user.id,
+            };
+        });
+        month = await this.service.findMonthByISO(user.id, body.monthISO);
+        if (!month) {
+            month = await this.service.createMonth(user.id, body.monthISO);
+        }
+        await this.service.updateExpenses(body.new_expenses, user.id, month.id);
     }
     async UpdateSettings(user, body) {
         if (body.newItems) {

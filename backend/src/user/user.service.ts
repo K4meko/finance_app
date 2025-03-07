@@ -100,9 +100,12 @@ export class UserService {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
       include: {
-        monthlyExpenses: true,
+        monthlyExpenses: {
+          include: {
+            month: true,
+          },
+        },
         months: true,
-
         defaultBudget: true,
       },
     });
@@ -128,15 +131,46 @@ export class UserService {
     console.log(`Expenses: ${expenses}`);
     return expenses;
   }
-  async updateExpenses(new_expenses: MonthlyExpense[], userId: number) {
-    await this.prisma.month.updateMany({
+  async updateExpenses(
+    new_expenses: MonthlyExpense[],
+    userId: number,
+    monthId: number,
+  ) {
+    new_expenses = new_expenses.map((e) => {
+      delete e.id;
+      return {
+        ...e,
+        userId,
+        monthId,
+      };
+    });
+    await this.prisma.monthlyExpense.deleteMany({ where: { userId, monthId } });
+    await this.prisma.monthlyExpense.createMany({
       data: new_expenses,
-      where: { userId },
+    });
+  }
+  async findMonthByISO(userId: number, monthISO: string) {
+    return this.prisma.month.findFirst({
+      where: {
+        userId,
+        timestamp: monthISO,
+      },
+    });
+  }
+  async createMonth(userId: number, monthISO: string) {
+    return this.prisma.month.create({
+      data: {
+        userId,
+        timestamp: monthISO,
+        year: parseInt(monthISO.split('-')[0]),
+        paycheck: 0,
+        budgetId: undefined,
+      },
     });
   }
   async deleteUser(id: number) {
     console.log(`Deleting user with id: ${id}`);
-    if (!id || id === undefined || id === null) {
+    if (!id) {
       return { message: 'No user found' };
     }
     const deleteExpenses = this.prisma.monthlyExpense.deleteMany({

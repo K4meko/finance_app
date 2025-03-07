@@ -9,7 +9,7 @@ import {
   Portal,
 } from "@mantine/core";
 import {useDisclosure} from "@mantine/hooks";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {Route, Routes, useNavigate} from "react-router-dom";
 import {useMediaQuery} from "@mantine/hooks";
 import logo from "../assets/Budgetly.svg";
@@ -22,13 +22,15 @@ import CalendarContent from "./CalendarContent.tsx";
 import SettingsContent from "./SettingsContent.tsx";
 import OptionsContent from "./OptionsContent.tsx";
 import {jwtDecode} from "jwt-decode";
-import {JWTPayload} from "../types/types.ts";
+import {JWTPayload, Month} from "../types/types.ts";
 import ExpensesContent from "./ExpensesContent.tsx";
+import {getUserInfo} from "../api/queries/getUserInfo.ts";
 
 export function Home() {
   const isSmallScreen = useMediaQuery("(max-width: 768px)");
 
   const [opened, {toggle}] = useDisclosure();
+  const [months, setMonths] = useState<Month[] | undefined>(undefined)
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -59,6 +61,21 @@ export function Home() {
   useEffect(() => {
     validateToken();
   }, [token, navigate]);
+
+    useEffect(() => {
+        const fetchUserInfo = async () => {
+            try {
+                const userInfo = await getUserInfo();
+                setMonths(userInfo?.months)
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchUserInfo();
+    }, []);
+
+    console.log(months)
 
   return (
     <>

@@ -54,9 +54,22 @@ export class UserController {
   @Put('expenses')
   async UpdateExpenses(
     @GetUser() user: User,
-    @Body() body: { new_expenses: MonthlyExpense[] },
+    @Body() body: { new_expenses: MonthlyExpense[]; monthISO: string },
   ) {
-    await this.service.updateExpenses(body.new_expenses, user.id);
+    let month;
+    body.new_expenses = body.new_expenses.map((expense) => {
+      // @ts-expect-error Fix
+      delete expense.month;
+      return {
+        ...expense,
+        userId: user.id,
+      };
+    });
+    month = await this.service.findMonthByISO(user.id, body.monthISO);
+    if (!month) {
+      month = await this.service.createMonth(user.id, body.monthISO);
+    }
+    await this.service.updateExpenses(body.new_expenses, user.id, month.id);
   }
   @Put('settings')
   async UpdateSettings(

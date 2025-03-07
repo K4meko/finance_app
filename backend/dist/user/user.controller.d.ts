@@ -6,23 +6,35 @@ export declare class UserController {
     getUserBudgeting(user: User): Promise<({
         months: {
             id: number;
-            createdAt: Date;
             userId: number;
+            createdAt: Date;
+            timestamp: string;
             year: number;
             paycheck: number;
-            budgetId: number;
+            budgetId: number | null;
         }[];
-        monthlyExpenses: {
-            id: number;
-            userId: number;
-            type: string;
+        monthlyExpenses: ({
+            month: {
+                id: number;
+                userId: number;
+                createdAt: Date;
+                timestamp: string;
+                year: number;
+                paycheck: number;
+                budgetId: number | null;
+            };
+        } & {
+            id: string;
             amount: number;
-        }[];
+            type: string;
+            userId: number;
+            monthId: number;
+        })[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -39,11 +51,12 @@ export declare class UserController {
     }>;
     AddExpenses(user: User): Promise<{
         id: number;
-        createdAt: Date;
         userId: number;
+        createdAt: Date;
+        timestamp: string;
         year: number;
         paycheck: number;
-        budgetId: number;
+        budgetId: number | null;
     }[]>;
     DeleteUser(user: User): Promise<[import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, {
         id: number;
@@ -77,6 +90,7 @@ export declare class UserController {
     }>;
     UpdateExpenses(user: User, body: {
         new_expenses: MonthlyExpense[];
+        monthISO: string;
     }): Promise<void>;
     UpdateSettings(user: User, body: {
         newItems?: BudgetItem[];
@@ -84,9 +98,9 @@ export declare class UserController {
     }): Promise<{
         items: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
         paycheck: Date;
     }>;

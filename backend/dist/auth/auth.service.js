@@ -31,12 +31,6 @@ let AuthService = class AuthService {
                     password: hash,
                     firstName: body.firstName,
                     lastName: body.lastName,
-                    monthlyExpenses: {
-                        create: body.monthlyExpenses?.map((expense) => ({
-                            type: expense.name,
-                            amount: expense.amount,
-                        })) || [],
-                    },
                     months: {
                         create: [],
                     },
