@@ -1,9 +1,10 @@
 import {useState} from "react";
 import "./borderbox.css";
-import {Button, MantineProvider, createTheme, rem} from "@mantine/core";
+import {Button, MantineProvider, Modal, createTheme, rem} from "@mantine/core";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {SignIn} from "./pages/SignIn";
 import "@mantine/core/styles.css";
+import {ModalsProvider} from "@mantine/modals";
 import "@mantine/dates/styles.css";
 import {Header} from "./components/Header";
 import {Home} from "./pages/Home";
@@ -79,13 +80,15 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme={"dark"}>
-        <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<Home />} />
-            <Route path='signin' element={<SignIn />} />
-            <Route path='/home/*' element={<Home />} />
-          </Routes>
-        </BrowserRouter>
+        <ModalsProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='signin' element={<SignIn />} />
+              <Route path='/home/*' element={<Home />} />
+            </Routes>
+          </BrowserRouter>
+        </ModalsProvider>
       </MantineProvider>
     </QueryClientProvider>
   );

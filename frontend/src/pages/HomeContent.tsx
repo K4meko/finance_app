@@ -1,32 +1,46 @@
-import React, {useState} from "react";
+import {useEffect, useState} from "react";
 import {
   Button,
   Modal,
-  TextInput,
-  NumberInput,
-  Select,
-  Group,
-  Stack,
-  Title,
   Paper,
   Container,
   Box,
   Text,
-  Space,
   Flex,
+  Title,
+  NumberInput,
+  Group,
+  Select,
+  Stack,
 } from "@mantine/core";
+import {useDisclosure} from "@mantine/hooks";
 import {Chart as ChartJS, ArcElement, Tooltip, Legend} from "chart.js";
 import {Pie} from "react-chartjs-2";
+import {getUserInfo} from "../api/queries/getUserInfo";
+import {Month} from "../types/types";
 
-// Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 function HomeContent() {
-  const [openModal, setOpenModal] = useState(false);
-  const [entryType, setEntryType] = useState("");
-  const [entryAmount, setEntryAmount] = useState<number | "">(0);
+  const [months, setMonths] = useState<Month[]>([]);
+  const [opened, {open, close}] = useDisclosure(false);
 
-  // Mock data for the pie chart
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userInfo = await getUserInfo();
+        if (userInfo) {
+          setMonths(userInfo.months || []);
+        } else {
+          console.error("Failed to fetch user info:", userInfo);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchUserInfo();
+  }, []);
+
   const chartData = {
     labels: [
       "Housing",
@@ -40,12 +54,12 @@ function HomeContent() {
       {
         data: [1200, 400, 300, 200, 250, 650],
         backgroundColor: [
-          "rgba(255, 99, 132, 0.7)", // red - housing
-          "rgba(54, 162, 235, 0.7)", // blue - food
-          "rgba(255, 206, 86, 0.7)", // yellow - transportation
-          "rgba(75, 192, 192, 0.7)", // green - entertainment
-          "rgba(153, 102, 255, 0.7)", // purple - utilities
-          "rgba(255, 159, 64, 0.7)", // orange - savings
+          "rgba(255, 99, 132, 0.7)",
+          "rgba(54, 162, 235, 0.7)",
+          "rgba(255, 206, 86, 0.7)",
+          "rgba(75, 192, 192, 0.7)",
+          "rgba(153, 102, 255, 0.7)",
+          "rgba(255, 159, 64, 0.7)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
@@ -63,13 +77,8 @@ function HomeContent() {
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "right" as const,
-      },
-      title: {
-        display: true,
-        text: "Monthly Expense Breakdown",
-      },
+      legend: {position: "right" as const},
+      title: {display: true, text: "Monthly Expense Breakdown"},
       tooltip: {
         callbacks: {
           label: function (context: any) {
@@ -87,45 +96,48 @@ function HomeContent() {
     },
   };
 
-  const handleAddEntry = () => {
-    // Here you would handle the submission of the new entry
-    console.log({entryType, entryAmount});
-    setOpenModal(false);
+  const [entryType, setEntryType] = useState<string>("");
+  const [entryAmount, setEntryAmount] = useState<number | "">("");
 
-    // Reset form
-    setEntryType("");
-    setEntryAmount(0);
+  const handleAddEntry = (): void => {
+    close();
   };
-
   return (
     <Container size='lg' py='xl' w={{base: "100%", md: "80%"}}>
-      <Paper shadow='sm' p='md' mb='xl' w={"100%"} flex={"true"}>
-        <Flex direction={"row"} justify={"space-between"} p='md' mb='xl'>
-          <Title order={2} mb='md'>
-            Home
-          </Title>
+      <Paper shadow='sm' p='md' mb='xl' w='100%'>
+        <Flex direction='row' justify='space-between' p='md' mb='xl'>
+          <Title order={2}>Home</Title>
           <Button
             size='lg'
-            onClick={() => setOpenModal(true)}
             color='blue'
             leftSection={<span>+</span>}
+            onClick={() => {
+              console.log("Add New Entry button clicked");
+              open();
+            }}
           >
             Add New Entry
           </Button>
         </Flex>
-
-        <Box h={400} style={{display: "flex", justifyContent: "center"}}>
-          <div style={{maxWidth: "600px", width: "100%"}}>
-            <Pie data={chartData} options={chartOptions} />
-          </div>
-        </Box>
+        {months.length !== 0 ? (
+          <Box h={400} style={{display: "flex", justifyContent: "center"}}>
+            <div style={{maxWidth: "600px", width: "100%"}}>
+              <Pie data={chartData} options={chartOptions} />
+            </div>
+          </Box>
+        ) : (
+          <Text>No data available</Text>
+        )}
       </Paper>
 
       <Modal
-        opened={openModal}
-        onClose={() => setOpenModal(false)}
+        onClose={() => {
+          close();
+        }}
+        opened={opened}
         title='Add New Financial Entry'
         size='md'
+        centered
       >
         <Stack>
           <Select
@@ -156,7 +168,7 @@ function HomeContent() {
           />
 
           <Group justify='flex-end' mt='md'>
-            <Button variant='outline' onClick={() => setOpenModal(false)}>
+            <Button variant='outline' onClick={close}>
               Cancel
             </Button>
             <Button onClick={handleAddEntry}>Save Entry</Button>
