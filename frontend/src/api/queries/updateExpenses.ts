@@ -18,4 +18,5 @@ const UpdateExpenses = async (input: {
   const data = await response;
   return data;
 };
+
 export default UpdateExpenses;
