@@ -1,6 +1,6 @@
 import {jwtDecode} from "jwt-decode";
 interface LoginResponse {
-  jwtToken: string;
+  access_token: string;
 }
 export const fetchLogin = async (email: string, password: string) => {
   const response = await fetch(`http://localhost:3000/auth/login`, {
@@ -16,15 +16,7 @@ export const fetchLogin = async (email: string, password: string) => {
     return response.statusText;
   }
   const data: LoginResponse = await response.json();
-  const token = data.jwtToken;
-
-  if (token) {
-    const decoded = jwtDecode(token);
-    localStorage.setItem("userId", decoded.sub || "");
-    localStorage.setItem("token", token);
-    window.location.href = "/home";
-  } else {
-    throw new Error("No token received");
-  }
-  console.log(token);
+  const token = data.access_token;
+  localStorage.setItem('token', token);
+  return null;
 };

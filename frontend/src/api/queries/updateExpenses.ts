@@ -1,10 +1,9 @@
-import {BudgetItem} from "../../types/types";
+import {MonthlyExpense} from "../../types/types";
 
-const UpdateSettings = async (input: {
-  newItems?: BudgetItem[];
-  expectedDatePaycheck?: Date | null;
+const UpdateExpenses = async (input: {
+    new_expenses: MonthlyExpense[]; monthISO: string
 }) => {
-  const response = await fetch(`http://localhost:3000/user/settings`, {
+  const response = await fetch(`http://localhost:3000/user/expenses`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -19,4 +18,4 @@ const UpdateSettings = async (input: {
   const data = await response;
   return data;
 };
-export default UpdateSettings;
+export default UpdateExpenses;

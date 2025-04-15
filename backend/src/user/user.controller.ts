@@ -54,28 +54,86 @@ export class UserController {
   @Put('expenses')
   async UpdateExpenses(
     @GetUser() user: User,
-    @Body() body: { new_expenses: MonthlyExpense[] },
+    @Body() body: { new_expenses: MonthlyExpense[]; monthISO: string },
   ) {
-    await this.service.updateExpenses(body.new_expenses, user.id);
+    let month;
+    body.new_expenses = body.new_expenses.map((expense) => {
+      // @ts-expect-error Fix
+      delete expense.month;
+      return {
+        ...expense,
+        userId: user.id,
+      };
+    });
+    month = await this.service.findMonthByISO(user.id, body.monthISO);
+    if (!month) {
+      month = await this.service.createMonth(
+        user.id,
+        body.monthISO,
+        new Date(body.monthISO).toLocaleString('default', { month: 'long', year: 'numeric' }),
+        0,
+        body.new_expenses,
+        []
+      );
+    }
+    await this.service.updateExpenses(body.new_expenses, user.id, month.id);
   }
   @Put('settings')
   async UpdateSettings(
     @GetUser() user: User,
-    @Body() body: { newItems?: BudgetItem[]; expectedDatePaycheck?: Date },
+    @Body() body: { newItems?: BudgetItem[]; expectedDatePaycheck?: Date; salaryAmount?: number },
   ) {
-    // console.log(newItems, expectedDatePaycheck);
     if (body.newItems) {
-      // console.log(`printing Budget: ${newItems}`);
       await this.service.updateBudget(user.id, body.newItems);
     }
     if (body.expectedDatePaycheck) {
-      // console.log(`printing Paycheck: ${expectedDatePaycheck}`);
       await this.service.updatePaycheck(user.id, body.expectedDatePaycheck);
+    }
+    if (body.salaryAmount) {
+      await this.service.updateSalary(user.id, body.salaryAmount);
     }
     const updatedUser = await this.service.getSettings(user.id);
     return {
       items: updatedUser.defaultBudget,
       paycheck: updatedUser.expectedDatePaycheck,
+      salaryAmount: updatedUser.salaryAmount,
     };
+  }
+  @Put('month')
+  async saveMonth(
+    @GetUser() user: User,
+    @Body() body: { 
+      monthISO: string;
+      name: string;
+      salary: number;
+      expenses: MonthlyExpense[];
+      budgetItems: BudgetItem[];
+    },
+  ) {
+    // Check if month already exists
+    let month = await this.service.findMonthByISO(user.id, body.monthISO);
+    
+    if (!month) {
+      // Create new month with all data
+      month = await this.service.createMonth(
+        user.id,
+        body.monthISO,
+        body.name,
+        body.salary,
+        body.expenses,
+        body.budgetItems
+      );
+    } else {
+      // Update existing month's data
+      month = await this.service.updateMonth(
+        month.id,
+        body.name,
+        body.salary,
+        body.expenses,
+        body.budgetItems
+      );
+    }
+
+    return { message: 'Month saved successfully', month };
   }
 }

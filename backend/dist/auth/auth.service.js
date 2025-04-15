@@ -13,7 +13,6 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const argon = require("argon2");
-const library_1 = require("@prisma/client/runtime/library");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 let AuthService = class AuthService {
@@ -23,85 +22,58 @@ let AuthService = class AuthService {
         this.configService = configService;
     }
     async signup(body) {
+        const existingUser = await this.prisma.user.findUnique({
+            where: { email: body.email }
+        });
+        if (existingUser) {
+            throw new common_1.ConflictException('Email already exists');
+        }
         const hash = await argon.hash(body.password);
-        try {
-            const user = await this.prisma.user.create({
-                data: {
-                    email: body.email,
-                    password: hash,
-                    firstName: body.firstName,
-                    lastName: body.lastName,
-                    monthlyExpenses: {
-                        create: body.monthlyExpenses?.map((expense) => ({
-                            type: expense.name,
-                            amount: expense.amount,
-                        })) || [],
-                    },
-                    months: {
-                        create: [],
-                    },
-                    expectedDatePaycheck: body.dateOfPaycheck,
-                    defaultBudget: { create: [] },
-                },
-                include: {
-                    monthlyExpenses: true,
-                    months: true,
-                    defaultBudget: true,
-                },
-            });
-            return this.signJwt(user.id, user.email, user.firstName, user.lastName);
-        }
-        catch (error) {
-            if (error instanceof library_1.PrismaClientKnownRequestError) {
-                if (error.code === 'P2002') {
-                    throw new common_1.ForbiddenException(`Email ${body.email} already exists`);
-                }
-            }
-            throw error;
-        }
+        const user = await this.prisma.user.create({
+            data: {
+                email: body.email,
+                hash,
+                firstName: body.firstName,
+                lastName: body.lastName,
+            },
+        });
+        return this.signJwt(user.id, user.email, user.firstName, user.lastName);
     }
     async login(body) {
-        try {
-            const user = await this.prisma.user.findUnique({
-                where: { email: body.email },
-                select: {
-                    id: true,
-                    email: true,
-                    password: true,
-                    firstName: true,
-                    lastName: true,
-                },
-            });
-            if (!user) {
-                throw new common_1.ForbiddenException(`User ${body.email} does not exist`);
-            }
-            const passwordMatches = await argon.verify(user.password, body.password);
-            if (!passwordMatches) {
-                throw new common_1.ForbiddenException('Password is incorrect');
-            }
-            return this.signJwt(user.id, user.email, user.firstName, user.lastName);
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: body.email,
+            },
+            select: {
+                id: true,
+                email: true,
+                hash: true,
+                firstName: true,
+                lastName: true,
+            },
+        });
+        if (!user) {
+            throw new common_1.ForbiddenException('Credentials incorrect');
         }
-        catch (error) {
-            if (error instanceof library_1.PrismaClientKnownRequestError) {
-                if (error.code === 'P2021') {
-                    throw new common_1.ForbiddenException('User not found');
-                }
-            }
-            throw error;
+        const passwordMatches = await argon.verify(user.hash, body.password);
+        if (!passwordMatches) {
+            throw new common_1.ForbiddenException('Credentials incorrect');
         }
+        return this.signJwt(user.id, user.email, user.firstName, user.lastName);
     }
-    signJwt(userId, email, firstName, lastName) {
+    async signJwt(userId, email, firstName, lastName) {
         const payload = {
             sub: userId,
-            email: email,
-            firstName: firstName,
-            lastName: lastName,
+            email,
+            firstName,
+            lastName,
         };
+        const token = await this.jwtService.signAsync(payload, {
+            expiresIn: '15m',
+            secret: this.configService.get('JWT_SECRET'),
+        });
         return {
-            jwtToken: this.jwtService.sign(payload, {
-                expiresIn: '1d',
-                secret: this.configService.get('JWT_SECRET'),
-            }),
+            access_token: token,
         };
     }
 };

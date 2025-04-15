@@ -35,7 +35,19 @@ let UserController = class UserController {
         return this.service.updateInformation(user.id, body);
     }
     async UpdateExpenses(user, body) {
-        await this.service.updateExpenses(body.new_expenses, user.id);
+        let month;
+        body.new_expenses = body.new_expenses.map((expense) => {
+            delete expense.month;
+            return {
+                ...expense,
+                userId: user.id,
+            };
+        });
+        month = await this.service.findMonthByISO(user.id, body.monthISO);
+        if (!month) {
+            month = await this.service.createMonth(user.id, body.monthISO, new Date(body.monthISO).toLocaleString('default', { month: 'long', year: 'numeric' }), 0, body.new_expenses, []);
+        }
+        await this.service.updateExpenses(body.new_expenses, user.id, month.id);
     }
     async UpdateSettings(user, body) {
         if (body.newItems) {
@@ -44,11 +56,25 @@ let UserController = class UserController {
         if (body.expectedDatePaycheck) {
             await this.service.updatePaycheck(user.id, body.expectedDatePaycheck);
         }
+        if (body.salaryAmount) {
+            await this.service.updateSalary(user.id, body.salaryAmount);
+        }
         const updatedUser = await this.service.getSettings(user.id);
         return {
             items: updatedUser.defaultBudget,
             paycheck: updatedUser.expectedDatePaycheck,
+            salaryAmount: updatedUser.salaryAmount,
         };
+    }
+    async saveMonth(user, body) {
+        let month = await this.service.findMonthByISO(user.id, body.monthISO);
+        if (!month) {
+            month = await this.service.createMonth(user.id, body.monthISO, body.name, body.salary, body.expenses, body.budgetItems);
+        }
+        else {
+            month = await this.service.updateMonth(month.id, body.name, body.salary, body.expenses, body.budgetItems);
+        }
+        return { message: 'Month saved successfully', month };
     }
 };
 exports.UserController = UserController;
@@ -97,6 +123,14 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "UpdateSettings", null);
+__decorate([
+    (0, common_1.Put)('month'),
+    __param(0, (0, decorator_1.GetUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "saveMonth", null);
 exports.UserController = UserController = __decorate([
     (0, common_1.UseGuards)(guard_1.JwtGuard),
     (0, common_1.Controller)('user'),

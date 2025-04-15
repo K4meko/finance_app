@@ -7,17 +7,33 @@ export declare class UserController {
         months: {
             id: number;
             createdAt: Date;
+            name: string;
+            month: number;
             userId: number;
+            timestamp: string;
             year: number;
+            salary: number | null;
             paycheck: number;
-            budgetId: number;
         }[];
-        monthlyExpenses: {
-            id: number;
+        monthlyExpenses: ({
+            month: {
+                id: number;
+                createdAt: Date;
+                name: string;
+                month: number;
+                userId: number;
+                timestamp: string;
+                year: number;
+                salary: number | null;
+                paycheck: number;
+            };
+        } & {
+            id: string;
             userId: number;
             type: string;
+            monthId: number;
             amount: number;
-        }[];
+        })[];
         defaultBudget: {
             id: number;
             userId: number;
@@ -29,7 +45,8 @@ export declare class UserController {
         email: string;
         firstName: string | null;
         lastName: string | null;
-        password: string;
+        password: string | null;
+        hash: string;
         createdAt: Date;
         updatedAt: Date;
         expectedDatePaycheck: Date | null;
@@ -40,17 +57,21 @@ export declare class UserController {
     AddExpenses(user: User): Promise<{
         id: number;
         createdAt: Date;
+        name: string;
+        month: number;
         userId: number;
+        timestamp: string;
         year: number;
+        salary: number | null;
         paycheck: number;
-        budgetId: number;
     }[]>;
     DeleteUser(user: User): Promise<[import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, import(".prisma/client").Prisma.BatchPayload, {
         id: number;
         email: string;
         firstName: string | null;
         lastName: string | null;
-        password: string;
+        password: string | null;
+        hash: string;
         createdAt: Date;
         updatedAt: Date;
         expectedDatePaycheck: Date | null;
@@ -69,7 +90,8 @@ export declare class UserController {
         email: string;
         firstName: string | null;
         lastName: string | null;
-        password: string;
+        password: string | null;
+        hash: string;
         createdAt: Date;
         updatedAt: Date;
         expectedDatePaycheck: Date | null;
@@ -77,10 +99,12 @@ export declare class UserController {
     }>;
     UpdateExpenses(user: User, body: {
         new_expenses: MonthlyExpense[];
+        monthISO: string;
     }): Promise<void>;
     UpdateSettings(user: User, body: {
         newItems?: BudgetItem[];
         expectedDatePaycheck?: Date;
+        salaryAmount?: number;
     }): Promise<{
         items: {
             id: number;
@@ -89,5 +113,26 @@ export declare class UserController {
             amount: number;
         }[];
         paycheck: Date;
+        salaryAmount: number;
+    }>;
+    saveMonth(user: User, body: {
+        monthISO: string;
+        name: string;
+        salary: number;
+        expenses: MonthlyExpense[];
+        budgetItems: BudgetItem[];
+    }): Promise<{
+        message: string;
+        month: {
+            id: number;
+            createdAt: Date;
+            name: string;
+            month: number;
+            userId: number;
+            timestamp: string;
+            year: number;
+            salary: number | null;
+            paycheck: number;
+        };
     }>;
 }

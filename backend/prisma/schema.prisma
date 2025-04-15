@@ -9,53 +9,58 @@ datasource db {
 }
 
 model User {
-  id    Int      @id @default(autoincrement()) 
-  email     String   @unique
-  firstName      String?
-  lastName      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  months    Month[]
+  id                   Int              @id @default(autoincrement())
+  email                String           @unique
+  firstName            String?
+  lastName             String?
+  password             String?
+  hash                 String
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  months               Month[]
   expectedDatePaycheck DateTime?
-  salaryAmount Float?
-  monthlyExpenses MonthlyExpense[]
-  defaultBudget BudgetItem[]
+  salaryAmount         Float?
+  monthlyExpenses      MonthlyExpense[]
+  defaultBudget        BudgetItem[]
 }
-
-
 
 model BudgetItem {
-  id        Int     @id @default(autoincrement())
-  amount    Float
-  type      String
-  User     User    @relation(fields: [userId], references: [id])
-  userId    Int
-
+  id     Int    @id @default(autoincrement())
+  amount Float
+  type   String
+  User   User   @relation(fields: [userId], references: [id])
+  userId Int
 }
-model MonthBudgetItem{
-    id        Int     @id @default(autoincrement())
-  amount    Float
-  type      String
-  Month     Month    @relation(fields: [monthId], references: [id])
-  monthId    Int
+
+model MonthBudgetItem {
+  id      Int    @id @default(autoincrement())
+  amount  Float
+  type    String
+  Month   Month  @relation(fields: [monthId], references: [id])
+  monthId Int
 }
 
 model MonthlyExpense {
-  id        Int      @id @default(autoincrement())
-  type      String
-  amount    Float
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
+  id      String @id @default(cuid())
+  type    String
+  monthId Int
+  amount  Float
+  userId  Int
+  user    User   @relation(fields: [userId], references: [id])
+  month   Month  @relation(fields: [monthId], references: [id])
 }
 
 model Month {
-  id        Int      @id @default(autoincrement())
-  userId    Int      
-  user      User     @relation(fields: [userId], references: [id])
-  year      Int
-  paycheck    Float //driv se jmenovalo budget 
-  createdAt DateTime @default(now())
-  budgetId  Int @unique
-  budget   MonthBudgetItem[]
+  id             Int               @id @default(autoincrement())
+  userId         Int
+  user           User              @relation(fields: [userId], references: [id])
+  timestamp      String
+  year           Int
+  month          Int
+  name           String            @default("")
+  salary         Float?
+  paycheck       Float             @default(0)
+  createdAt      DateTime          @default(now())
+  budget         MonthBudgetItem[]
+  MonthlyExpense MonthlyExpense[]
 }

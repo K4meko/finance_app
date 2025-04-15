@@ -135,7 +135,11 @@ export function SignIn(props: PaperProps) {
                     form.values.email,
                     form.values.password
                   );
-                  setError(data || "");
+                  if (!data) {
+                    window.location.href = "/home";
+                  } else {
+                    setError(data);
+                  }
                 } else {
                   const data = await fetchRegister(
                     form.values.email,

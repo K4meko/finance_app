@@ -9,6 +9,7 @@ import {
   Title,
   Card,
   Button,
+  NumberInput,
 } from "@mantine/core";
 import {DatePicker} from "@mantine/dates";
 import {getUserInfo} from "../api/queries/getUserInfo";
@@ -37,6 +38,8 @@ function OptionsContent() {
   const [userInfo, setUserInfo] = useState<User | null>(null);
   const [value, setValue] = useState<Date | null>(null);
   const [salaryDate, setSalaryDate] = useState<string | null>(null);
+  const [salary, setSalary] = useState<number | "">(0);
+
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -46,6 +49,7 @@ function OptionsContent() {
           if (userInfo.expectedDatePaycheck) {
             setValue(new Date(userInfo.expectedDatePaycheck));
           }
+          setSalary(userInfo.salaryAmount || 0);
         } else {
           console.error("Failed to fetch user info:", userInfo);
         }
@@ -74,10 +78,14 @@ function OptionsContent() {
             <Title order={2} mb='md'>
               Salary
             </Title>
-            <Input
+            <NumberInput
               w='100%'
               radius='md'
               placeholder='Enter your monthly salary'
+              value={salary}
+              onChange={val => setSalary(val as number | "")}
+              min={0}
+              leftSection='$'
             />
             <Text w='100%' mt='md'>
               When is your salary?
@@ -91,8 +99,20 @@ function OptionsContent() {
             />
             <Button
               m={"md"}
-              onClick={() => {
-                UpdateSettings({expectedDatePaycheck: value});
+              onClick={async () => {
+                await UpdateSettings({
+                  expectedDatePaycheck: value,
+                  salaryAmount: salary as number
+                });
+                // Refresh user info
+                const userInfo = await getUserInfo();
+                if (userInfo) {
+                  setBudgetingItems(userInfo.defaultBudget || []);
+                  if (userInfo.expectedDatePaycheck) {
+                    setValue(new Date(userInfo.expectedDatePaycheck));
+                  }
+                  setSalary(userInfo.salaryAmount || 0);
+                }
               }}
             >
               Submit

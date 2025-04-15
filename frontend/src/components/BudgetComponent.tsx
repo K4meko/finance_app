@@ -25,7 +25,7 @@ function BudgetComponent({
           size='md'
         />
         <TextInput
-          label='Amount'
+          label='Amount (percentage)'
           placeholder='Enter amount'
           value={amount}
           onChange={e => {

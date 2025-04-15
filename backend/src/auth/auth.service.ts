@@ -21,91 +21,69 @@ export class AuthService {
   ) {}
 
   async signup(body: AuthDto) {
+    // Check if user with this email already exists
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email: body.email }
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+
     const hash = await argon.hash(body.password);
-    try {
-      const user = await this.prisma.user.create({
-        data: {
-          email: body.email,
-          password: hash,
-          firstName: body.firstName,
-          lastName: body.lastName,
-          monthlyExpenses: {
-            create:
-              body.monthlyExpenses?.map((expense) => ({
-                type: expense.name,
-                amount: expense.amount,
-              })) || [],
-          },
-          months: {
-            create: [],
-          },
-          expectedDatePaycheck: body.dateOfPaycheck,
-          defaultBudget: { create: [] },
-        },
-        include: {
-          monthlyExpenses: true,
-          months: true,
-          defaultBudget: true,
-        },
-      });
+    const user = await this.prisma.user.create({
+      data: {
+        email: body.email,
+        hash,
+        firstName: body.firstName,
+        lastName: body.lastName,
+      },
+    });
 
-      return this.signJwt(user.id, user.email, user.firstName, user.lastName);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          // Handle unique constraint violation
-          throw new ForbiddenException(`Email ${body.email} already exists`);
-        }
-      }
-      throw error;
-    }
+    return this.signJwt(user.id, user.email, user.firstName, user.lastName);
   }
 
-  async login(body: LoginDto) {
-    try {
-      const user = await this.prisma.user.findUnique({
-        where: { email: body.email },
-        select: {
-          id: true,
-          email: true,
-          password: true,
-          firstName: true,
-          lastName: true,
-        },
-      });
+  async login(body: AuthDto) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: body.email,
+      },
+      select: {
+        id: true,
+        email: true,
+        hash: true,
+        firstName: true,
+        lastName: true,
+      },
+    });
 
-      if (!user) {
-        throw new ForbiddenException(`User ${body.email} does not exist`);
-      }
-
-      const passwordMatches = await argon.verify(user.password, body.password);
-      if (!passwordMatches) {
-        throw new ForbiddenException('Password is incorrect');
-      }
-
-      return this.signJwt(user.id, user.email, user.firstName, user.lastName);
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        if (error.code === 'P2021') {
-          throw new ForbiddenException('User not found');
-        }
-      }
-      throw error;
+    if (!user) {
+      throw new ForbiddenException('Credentials incorrect');
     }
+
+    const passwordMatches = await argon.verify(user.hash, body.password);
+    if (!passwordMatches) {
+      throw new ForbiddenException('Credentials incorrect');
+    }
+
+    return this.signJwt(user.id, user.email, user.firstName, user.lastName);
   }
 
-  signJwt(userId: number, email: string, firstName: string, lastName: string) {
+  async signJwt(userId: number, email: string, firstName: string, lastName: string): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
+      email,
+      firstName,
+      lastName,
     };
+
+    const token = await this.jwtService.signAsync(payload, {
+      expiresIn: '15m',
+      secret: this.configService.get<string>('JWT_SECRET'),
+    });
+
     return {
-      jwtToken: this.jwtService.sign(payload, {
-        expiresIn: '1d',
-        secret: this.configService.get<string>('JWT_SECRET'),
-      }),
+      access_token: token,
     };
   }
 }

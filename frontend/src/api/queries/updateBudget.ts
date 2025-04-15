@@ -3,6 +3,7 @@ import {BudgetItem} from "../../types/types";
 const UpdateSettings = async (input: {
   newItems?: BudgetItem[];
   expectedDatePaycheck?: Date | null;
+  salaryAmount?: number;
 }) => {
   const response = await fetch(`http://localhost:3000/user/settings`, {
     method: "PUT",
@@ -19,4 +20,5 @@ const UpdateSettings = async (input: {
   const data = await response;
   return data;
 };
+
 export default UpdateSettings;

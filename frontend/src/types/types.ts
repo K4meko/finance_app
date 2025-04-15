@@ -33,11 +33,13 @@ export interface MonthlyExpense {
   type: string;
   amount: number;
   userId: number;
+  month: Month
 }
 
 export interface Month {
   userId: number;
   year: number;
+  timestamp: string;
   paycheck: number;
   createdAt: string; // DateTime is represented as string in JSON
   budgetId: number;

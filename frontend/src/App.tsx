@@ -82,7 +82,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='signin' element={<SignIn />} />
+            <Route path='login' element={<SignIn />} />
             <Route path='/home/*' element={<Home />} />
           </Routes>
         </BrowserRouter>
