@@ -5,11 +5,11 @@ export declare class UserController {
     constructor(service: UserService);
     getUserBudgeting(user: User): Promise<({
         months: {
-            id: number;
-            createdAt: Date;
-            name: string;
             month: number;
+            name: string;
+            id: number;
             userId: number;
+            createdAt: Date;
             timestamp: string;
             year: number;
             salary: number | null;
@@ -17,11 +17,11 @@ export declare class UserController {
         }[];
         monthlyExpenses: ({
             month: {
-                id: number;
-                createdAt: Date;
-                name: string;
                 month: number;
+                name: string;
+                id: number;
                 userId: number;
+                createdAt: Date;
                 timestamp: string;
                 year: number;
                 salary: number | null;
@@ -29,16 +29,16 @@ export declare class UserController {
             };
         } & {
             id: string;
-            userId: number;
-            type: string;
-            monthId: number;
             amount: number;
+            type: string;
+            userId: number;
+            monthId: number;
         })[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -55,11 +55,11 @@ export declare class UserController {
         message: string;
     }>;
     AddExpenses(user: User): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
         month: number;
+        name: string;
+        id: number;
         userId: number;
+        createdAt: Date;
         timestamp: string;
         year: number;
         salary: number | null;
@@ -108,9 +108,9 @@ export declare class UserController {
     }): Promise<{
         items: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
         paycheck: Date;
         salaryAmount: number;
@@ -124,11 +124,11 @@ export declare class UserController {
     }): Promise<{
         message: string;
         month: {
-            id: number;
-            createdAt: Date;
-            name: string;
             month: number;
+            name: string;
+            id: number;
             userId: number;
+            createdAt: Date;
             timestamp: string;
             year: number;
             salary: number | null;

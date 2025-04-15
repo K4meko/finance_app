@@ -64,11 +64,11 @@ export declare class UserService {
     }>;
     getUserInfo(id: number): Promise<({
         months: {
-            id: number;
-            createdAt: Date;
-            name: string;
             month: number;
+            name: string;
+            id: number;
             userId: number;
+            createdAt: Date;
             timestamp: string;
             year: number;
             salary: number | null;
@@ -76,11 +76,11 @@ export declare class UserService {
         }[];
         monthlyExpenses: ({
             month: {
-                id: number;
-                createdAt: Date;
-                name: string;
                 month: number;
+                name: string;
+                id: number;
                 userId: number;
+                createdAt: Date;
                 timestamp: string;
                 year: number;
                 salary: number | null;
@@ -88,16 +88,16 @@ export declare class UserService {
             };
         } & {
             id: string;
-            userId: number;
-            type: string;
-            monthId: number;
             amount: number;
+            type: string;
+            userId: number;
+            monthId: number;
         })[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -115,11 +115,11 @@ export declare class UserService {
     }>;
     getSettings(id: number): Promise<{
         months: {
-            id: number;
-            createdAt: Date;
-            name: string;
             month: number;
+            name: string;
+            id: number;
             userId: number;
+            createdAt: Date;
             timestamp: string;
             year: number;
             salary: number | null;
@@ -127,16 +127,16 @@ export declare class UserService {
         }[];
         monthlyExpenses: {
             id: string;
-            userId: number;
-            type: string;
-            monthId: number;
             amount: number;
+            type: string;
+            userId: number;
+            monthId: number;
         }[];
         defaultBudget: {
             id: number;
-            userId: number;
-            type: string;
             amount: number;
+            type: string;
+            userId: number;
         }[];
     } & {
         id: number;
@@ -151,11 +151,11 @@ export declare class UserService {
         salaryAmount: number | null;
     }>;
     addExpenses(id: number): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
         month: number;
+        name: string;
+        id: number;
         userId: number;
+        createdAt: Date;
         timestamp: string;
         year: number;
         salary: number | null;
@@ -163,11 +163,11 @@ export declare class UserService {
     }[]>;
     updateExpenses(new_expenses: MonthlyExpense[], userId: number, monthId: number): Promise<void>;
     findMonthByISO(userId: number, monthISO: string): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
         month: number;
+        name: string;
+        id: number;
         userId: number;
+        createdAt: Date;
         timestamp: string;
         year: number;
         salary: number | null;
@@ -175,11 +175,11 @@ export declare class UserService {
     }>;
     createMonth(userId: number, monthISO: string, name: string, salary: number, expenses: MonthlyExpense[], budgetItems: BudgetItem[]): Promise<any>;
     updateMonth(monthId: number, name: string, salary: number, expenses: MonthlyExpense[], budgetItems: BudgetItem[]): Promise<{
-        id: number;
-        createdAt: Date;
-        name: string;
         month: number;
+        name: string;
+        id: number;
         userId: number;
+        createdAt: Date;
         timestamp: string;
         year: number;
         salary: number | null;
