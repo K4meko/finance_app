@@ -1,8 +1,8 @@
 import {useEffect} from "react";
-import ExpenseComponent from "../components/ExpenseComponent";
-import {getUserInfo} from "../api/queries/getUserInfo";
+import ExpenseComponent from "../components/ExpenseComponent.tsx";
+import {getUserInfo} from "../api/queries/getUserInfo.ts";
 import {Button, Center, Container, Stack, Title} from "@mantine/core";
-import {MonthlyExpense} from "../types/types";
+import {MonthlyExpense} from "../types/types.ts";
 import {useState} from "react";
 import {IconDeviceFloppy} from "@tabler/icons-react";
 import UpdateExpenses from "../api/queries/updateExpenses.ts";
@@ -62,15 +62,7 @@ function ExpensesContent() {
                   type: "", 
                   amount: 0, 
                   userId: 0, 
-                  month: {
-                    userId: 0,
-                    year: new Date().getFullYear(),
-                    timestamp: new Date().toISOString(),
-                    paycheck: 0,
-                    createdAt: new Date().toISOString(),
-                    budgetId: 0,
-                    budget: []
-                  }
+                  monthId: 0
                 },
               ])
             }
@@ -88,15 +80,7 @@ function ExpensesContent() {
                   type: expense.type,
                   amount: expense.amount,
                   userId: expense.userId,
-                  month: {
-                    userId: expense.userId,
-                    year: new Date().getFullYear(),
-                    timestamp: new Date().toISOString(),
-                    paycheck: 0,
-                    createdAt: new Date().toISOString(),
-                    budgetId: 0,
-                    budget: []
-                  }
+                  monthId: expense.monthId
                 }));
                 
                 await UpdateExpenses({

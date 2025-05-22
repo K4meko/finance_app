@@ -32,7 +32,8 @@ function BudgetComponent({
             const value = e.currentTarget.value;
             const parsedValue = parseFloat(value);
             if (!isNaN(parsedValue) || value === "") {
-              onUpdate(name, value === "" ? 0 : parsedValue);
+              const finalValue = value === "" ? 0 : Math.min(parsedValue, 100);
+              onUpdate(name, finalValue);
             }
           }}
           radius='md'

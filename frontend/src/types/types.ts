@@ -30,10 +30,11 @@ export interface MonthBudgetItem {
 }
 
 export interface MonthlyExpense {
+  id?: string;
   type: string;
   amount: number;
   userId: number;
-  month: Month
+  monthId?: number;
 }
 
 export interface Month {
